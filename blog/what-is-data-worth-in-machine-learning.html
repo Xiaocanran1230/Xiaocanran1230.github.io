@@ -1,0 +1,925 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>What Is Data Worth in Machine Learning? | Canran Xiao</title>
+    <meta name="description" content="What Is Data Worth in Machine Learning?">
+    <link rel="stylesheet" href="styles.css">
+    <script>
+      window.MathJax = {
+        tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
+        svg: { fontCache: 'global' }
+      };
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        if (window.mermaid) {
+          window.mermaid.initialize({ startOnLoad: true, theme: 'default' });
+        }
+      });
+    </script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="nav-wrap">
+        <a class="brand" href="../index.html">Canran Xiao</a>
+        <nav class="nav-links" aria-label="Primary navigation">
+          <a href="../index.html#about">About</a>
+          <a href="../index.html#news">News</a>
+          <a href="../index.html#publications">Selected Publications</a>
+          <a href="index.html">Blog</a>
+          <a href="../index.html#service">Service</a>
+          <a href="https://scholar.google.com/citations?user=TQIKwMIAAAAJ&amp;hl=zh-TW">Google Scholar</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="page">
+      <article class="article-shell">
+        <p class="eyebrow">Blog</p>
+        <h1>What Is Data Worth in Machine Learning?</h1>
+        <p class="article-meta">2026-06-25</p>
+        <div class="tag-list" aria-label="Tags">
+          <span class="tag">data-centric ai</span><span class="tag">data valuation</span><span class="tag">machine learning</span><span class="tag">data selection</span><span class="tag">data economy</span>
+        </div>
+        <div class="article-content">
+<blockquote>
+<p>Data value is not an intrinsic property of a data point. It is a counterfactual statement about how a data unit changes a learning system under a specific training algorithm, evaluation distribution, utility function, and social rule for attribution.</p>
+</blockquote>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ul>
+<li><a href="#why-data-value-is-hard-to-define">Why data value is hard to define</a></li>
+<li><a href="#a-minimal-setup">A minimal setup</a></li>
+<li><a href="#what-are-we-valuing">What are we valuing?</a></li>
+<li><a href="#desiderata-for-data-valuation">Desiderata for data valuation</a></li>
+<li><a href="#family-1-removal-and-marginal-contribution">Family 1: removal and marginal contribution</a></li>
+<li><a href="#family-2-shapley-style-valuation">Family 2: Shapley-style valuation</a></li>
+<li><a href="#family-3-semi-values-banzhaf-and-robust-valuation">Family 3: semi-values, Banzhaf, and robust valuation</a></li>
+<li><a href="#family-4-gradient-based-data-attribution">Family 4: gradient-based data attribution</a></li>
+<li><a href="#family-5-learned-data-valuators-and-datamodels">Family 5: learned data valuators and datamodels</a></li>
+<li><a href="#family-6-distributional-group-and-market-aware-valuation">Family 6: distributional, group, and market-aware valuation</a></li>
+<li><a href="#data-value-for-foundation-models">Data value for foundation models</a></li>
+<li><a href="#practical-recipe">Practical recipe</a></li>
+<li><a href="#failure-modes">Failure modes</a></li>
+<li><a href="#open-problems">Open problems</a></li>
+<li><a href="#references">References</a></li>
+</ul>
+<h2 id="why-data-value-is-hard-to-define">Why data value is hard to define</h2>
+<p>Data is often treated as a generic resource: more data should make models better, larger datasets should be more valuable, and rare data should be more useful than repeated data. These statements are directionally plausible but technically incomplete. In machine learning, the worth of data is not determined by the data alone. It depends on the model, optimization procedure, downstream task, evaluation set, compute budget, data ownership structure, and the decision we want to make.</p>
+<p>Consider four training examples:</p>
+<ol>
+<li>a clean but redundant cat image in a dataset that already contains one million cat images;</li>
+<li>a mislabeled medical image that consistently pushes the model toward a harmful diagnosis;</li>
+<li>a rare but noisy example from a long-tail class;</li>
+<li>a synthetic instruction that teaches a reasoning pattern not covered by the current fine-tuning set.</li>
+</ol>
+<p>The first may have near-zero marginal value. The second may have negative value. The third may be valuable only when combined with nearby examples. The fourth may be high-value for a reasoning benchmark but irrelevant for a multilingual dialogue system. None of these values is absolute.</p>
+<p>A more useful view is:</p>
+<blockquote>
+<p>The value of a data unit is the change it induces in a learning system under a specified utility.</p>
+</blockquote>
+<p>This makes data valuation a counterfactual problem. We ask: <em>What would have happened if this data point, group, client, source, or distribution were absent, present, reweighted, delayed, or replaced?</em></p>
+<p>This question matters for at least five reasons.</p>
+<ul>
+<li><strong>Debugging.</strong> Which training examples caused a wrong prediction? Which labels are suspicious?</li>
+<li><strong>Selection.</strong> Which examples should be used when the training budget is limited?</li>
+<li><strong>Acquisition.</strong> What kind of new data should be collected next?</li>
+<li><strong>Compensation.</strong> How should reward be allocated among contributors in collaborative learning or data markets?</li>
+<li><strong>Governance.</strong> Which data sources affect privacy, safety, bias, licensing, or the right to be forgotten?</li>
+</ul>
+<p>These goals overlap but are not identical. A valuation rule that is good for debugging may be poor for compensation. A rule that is fair for data owners may be too slow for online selection. A rule that works for a small supervised classifier may not transfer to instruction tuning of a large language model.</p>
+<h2 id="a-minimal-setup">A minimal setup</h2>
+<p>Let a training dataset be</p>
+<p>$$
+D = \{z_i\}_{i=1}^n, \quad z_i = (x_i, y_i),
+$$</p>
+<p>where $x_i$ is an input and $y_i$ is a target. Let $A$ be a learning algorithm that maps any subset $S \subseteq D$ into a trained model:</p>
+<p>$$
+\theta_S = A(S).
+$$</p>
+<p>Let $U(S)$ be the utility of training on subset $S$, for example validation accuracy, negative loss, calibrated reward, robustness score, task-specific success rate, or a weighted combination of multiple metrics:</p>
+<p>$$
+U(S) = \mathrm{Perf}(A(S); D_{\mathrm{val}}).
+$$</p>
+<p>A data valuation method assigns each data unit $z_i$ a scalar value:</p>
+<p>$$
+\phi_i = \mathrm{Val}(z_i; D, A, U).
+$$</p>
+<p>The notation already shows the main difficulty: $\phi_i$ is not a property of $z_i$ alone. It is defined with respect to a dataset $D$, an algorithm $A$, and a utility $U$.</p>
+<p>A useful mental model is the following dependency graph:</p>
+<pre class="mermaid">flowchart LR
+    Z[Data unit z_i] --&gt; V[Data value phi_i]
+    D[Other data D] --&gt; V
+    A[Learning algorithm A] --&gt; V
+    U[Utility function U] --&gt; V
+    E[Evaluation distribution] --&gt; V
+    B[Compute / budget] --&gt; V
+    R[Reward allocation rule] --&gt; V
+</pre>
+<p>If any node changes, the value may change. The same example can be useful for one model, harmful for another, and irrelevant for a third. The same data source can be high-value early in pretraining but redundant later. The same client can be useful for personalization but detrimental for a global model.</p>
+<p>This is why data valuation should be framed less as <em>measuring the intrinsic price of data</em> and more as <em>estimating the counterfactual role of data in a learning pipeline</em>.</p>
+<h2 id="what-are-we-valuing">What are we valuing?</h2>
+<p>Before choosing a valuation method, it is necessary to specify the unit of valuation.</p>
+<table>
+<thead>
+<tr>
+<th>Unit</th>
+<th>Example</th>
+<th>Typical question</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Token</td>
+<td>a wordpiece in a document</td>
+<td>Which tokens contribute to factual recall or memorization?</td>
+</tr>
+<tr>
+<td>Example</td>
+<td>one image-label pair, one instruction-response pair</td>
+<td>Which examples should be kept, removed, or relabeled?</td>
+</tr>
+<tr>
+<td>Group</td>
+<td>a class, domain, demographic group, data curator</td>
+<td>Which group contributes most to utility or fairness?</td>
+</tr>
+<tr>
+<td>Client</td>
+<td>a hospital, user device, company, institution</td>
+<td>How should federated rewards be allocated?</td>
+</tr>
+<tr>
+<td>Dataset</td>
+<td>an external corpus or benchmark</td>
+<td>Which dataset should be licensed or acquired?</td>
+</tr>
+<tr>
+<td>Distribution</td>
+<td>a source population or environment</td>
+<td>Which distribution improves deployment robustness?</td>
+</tr>
+<tr>
+<td>Time slice</td>
+<td>data collected at a specific period</td>
+<td>How does data value decay or increase over time?</td>
+</tr>
+<tr>
+<td>Synthetic generator</td>
+<td>a model or data-generation pipeline</td>
+<td>Which generator produces useful training signal?</td>
+</tr>
+</tbody>
+</table>
+<p>This distinction matters because data value is often <strong>non-additive</strong>. The value of a group is not necessarily the sum of the values of its members. Two examples can be individually weak but jointly useful. A dataset can be valuable because it covers a missing region of the input space, even if each example has modest point-wise value.</p>
+<h3 id="a-small-example-redundancy-and-complementarity">A small example: redundancy and complementarity</h3>
+<p>Suppose a model already has many examples around a frequent pattern. Adding one more near-duplicate example may barely change validation performance:</p>
+<p>$$
+U(S \cup \{z_i\}) - U(S) \approx 0.
+$$</p>
+<p>But if $z_i$ is the only example near a decision boundary or a rare subpopulation, it may have a large marginal contribution. If $z_i$ is mislabeled, the marginal contribution may be negative:</p>
+<p>$$
+U(S \cup \{z_i\}) - U(S) < 0.
+$$</p>
+<p>Now consider two examples $z_i, z_j$ that are ambiguous alone but clarify a local pattern together:</p>
+<p>$$
+U(S \cup \{z_i\}) - U(S) \approx 0,
+$$</p>
+<p>$$
+U(S \cup \{z_j\}) - U(S) \approx 0,
+$$</p>
+<p>but</p>
+<p>$$
+U(S \cup \{z_i, z_j\}) - U(S) \gg 0.
+$$</p>
+<p>Point-wise valuation struggles in this case unless it explicitly accounts for interactions. This is one reason Shapley-style methods became popular: they average marginal contributions across many possible coalitions.</p>
+<h2 id="desiderata-for-data-valuation">Desiderata for data valuation</h2>
+<p>Different applications need different desiderata. A compact list:</p>
+<table>
+<thead>
+<tr>
+<th>Desideratum</th>
+<th>Meaning</th>
+<th>Why it matters</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Faithfulness</td>
+<td>Value should reflect actual impact on the target utility.</td>
+<td>Necessary for selection and debugging.</td>
+</tr>
+<tr>
+<td>Fairness</td>
+<td>Contributors with comparable marginal roles should receive comparable reward.</td>
+<td>Necessary for data markets and federated learning.</td>
+</tr>
+<tr>
+<td>Stability</td>
+<td>Rankings should not change wildly across random seeds or noisy utility estimates.</td>
+<td>Necessary for reliable decisions.</td>
+</tr>
+<tr>
+<td>Scalability</td>
+<td>Method should work when $n$ is large and training is expensive.</td>
+<td>Necessary for deep learning and foundation models.</td>
+</tr>
+<tr>
+<td>Task-awareness</td>
+<td>Value should depend on the downstream capability or evaluation distribution.</td>
+<td>Necessary for targeted fine-tuning.</td>
+</tr>
+<tr>
+<td>Group-awareness</td>
+<td>Method should account for source, class, client, or temporal structure.</td>
+<td>Necessary for governance and compensation.</td>
+</tr>
+<tr>
+<td>Interaction-awareness</td>
+<td>Method should capture complementarity and redundancy.</td>
+<td>Necessary when examples work as coalitions.</td>
+</tr>
+<tr>
+<td>Transferability</td>
+<td>Values estimated on one model should remain useful for another model.</td>
+<td>Useful for large-model data selection.</td>
+</tr>
+<tr>
+<td>Privacy-awareness</td>
+<td>Valuation should not leak sensitive information.</td>
+<td>Necessary in regulated data pipelines.</td>
+</tr>
+</tbody>
+</table>
+<p>No single method satisfies all of them. The rest of the post is a taxonomy of major approaches and the trade-offs they make.</p>
+<h2 id="family-1-removal-and-marginal-contribution">Family 1: removal and marginal contribution</h2>
+<p>The simplest data value is leave-one-out (LOO): remove one point, retrain the model, and measure the utility drop.</p>
+<p>$$
+\phi_i^{\mathrm{LOO}} = U(D) - U(D \setminus \{z_i\}).
+$$</p>
+<p>If removing $z_i$ decreases performance, $z_i$ is helpful. If removing it increases performance, $z_i$ is harmful.</p>
+<p>LOO is easy to explain and directly counterfactual. But it has three limitations.</p>
+<p>First, it is expensive. Exact LOO requires retraining $n$ models. Second, it is local to the full dataset and ignores how the point behaves in smaller or different coalitions. Third, it underestimates data that is redundant with other useful examples. If two examples provide the same information, removing one may not hurt much, even though the pair as a whole is important.</p>
+<p>A related value is the single-addition marginal contribution:</p>
+<p>$$
+\phi_i^{\mathrm{add}} = U(\{z_i\}) - U(\emptyset),
+$$</p>
+<p>but this is often uninformative for modern ML because one example alone rarely trains a useful model.</p>
+<p>A more general marginal contribution is measured relative to a reference subset $S$:</p>
+<p>$$
+\Delta_i(S) = U(S \cup \{z_i\}) - U(S).
+$$</p>
+<p>This is the core primitive behind many valuation rules. The main question becomes: <em>which subsets $S$ should we average over, and with what weights?</em></p>
+<h2 id="family-2-shapley-style-valuation">Family 2: Shapley-style valuation</h2>
+<p>The Shapley value comes from cooperative game theory. In data valuation, the players are data units, the coalition is a subset of data, and the utility function is the performance of the model trained on that subset.</p>
+<p>For $D = \{z_1, \dots, z_n\}$ and utility $U(\cdot)$, the Data Shapley value of $z_i$ is</p>
+<p>$$
+\phi_i^{\mathrm{Shapley}}
+= \frac{1}{n}
+\sum_{S \subseteq D \setminus \{z_i\}}
+\frac{1}{\binom{n-1}{|S|}}
+\Big[U(S \cup \{z_i\}) - U(S)\Big].
+$$</p>
+<p>Equivalently, sample a random permutation $\pi$ of all data points. Let $P_i^\pi$ be the set of points that appear before $z_i$ in the permutation. Then</p>
+<p>$$
+\phi_i^{\mathrm{Shapley}}
+= \mathbb{E}_{\pi}
+\left[ U(P_i^\pi \cup \{z_i\}) - U(P_i^\pi) \right].
+$$</p>
+<p>This interpretation is useful: Shapley value is the expected marginal contribution of a data point when data arrive in a random order.</p>
+<h3 id="why-shapley-is-attractive">Why Shapley is attractive</h3>
+<p>The classic Shapley value is uniquely characterized by several axioms. In a data valuation context, they are commonly interpreted as follows.</p>
+<ul>
+<li><strong>Symmetry.</strong> If two data points have the same marginal contribution to every coalition, they receive the same value.</li>
+<li><strong>Null player.</strong> If a data point never changes utility, it receives zero value.</li>
+<li><strong>Additivity / linearity.</strong> If utility is a sum of two utilities, the value under the sum is the sum of the values.</li>
+<li><strong>Efficiency.</strong> The total value is distributed among all data points:</li>
+</ul>
+<p>$$
+\sum_i \phi_i = U(D) - U(\emptyset).
+$$</p>
+<p>These properties make Shapley appealing for compensation and collaborative data contribution. A contributor can argue that payment should reflect average marginal contribution across possible coalitions, not only behavior in the final dataset.</p>
+<h3 id="why-shapley-is-hard">Why Shapley is hard</h3>
+<p>The exact Shapley value requires considering all subsets, so the naive cost is exponential in $n$. For deep neural networks, each utility evaluation may require training or fine-tuning a model. This is usually infeasible.</p>
+<p>Several approximations are common.</p>
+<h4 id="monte-carlo-shapley">Monte Carlo Shapley</h4>
+<p>Sample random permutations and estimate the average marginal contribution:</p>
+<pre><code class="language-python">for permutation in random_permutations(D):
+    S = empty_set
+    old_u = U(S)
+    for z_i in permutation:
+        new_u = U(S union {z_i})
+        value[z_i] += new_u - old_u
+        S = S union {z_i}
+        old_u = new_u
+value /= num_permutations
+</code></pre>
+<p>This is conceptually simple but still expensive because it calls $U(S)$ many times.</p>
+<h4 id="truncated-monte-carlo-shapley">Truncated Monte Carlo Shapley</h4>
+<p>In practice, the utility often saturates as the coalition grows. Once $U(S)$ is close enough to $U(D)$, later marginal contributions are small, so the permutation can be truncated. This reduces cost but introduces approximation error.</p>
+<h4 id="model-specific-shortcuts">Model-specific shortcuts</h4>
+<p>For some model families, Shapley values can be computed more efficiently. A well-known example is KNN-Shapley, where the structure of nearest-neighbor prediction permits exact or much faster computation than generic retraining-based Shapley.</p>
+<h4 id="group-shapley">Group Shapley</h4>
+<p>Instead of valuing each point, we can value groups: data owners, classes, domains, clients, or sources. Group valuation reduces the number of players and better matches many real applications. It also avoids a common mismatch: institutions usually contribute datasets, not isolated examples.</p>
+<h3 id="what-shapley-captures-well">What Shapley captures well</h3>
+<p>Shapley-style valuation is useful when the central question is:</p>
+<blockquote>
+<p>How should the total utility of a collaborative learning system be attributed among data contributors?</p>
+</blockquote>
+<p>It naturally accounts for redundancy and complementarity through averaging over coalitions. It can assign low value to redundant data and high value to data that improves many coalitions.</p>
+<h3 id="what-shapley-does-not-solve">What Shapley does not solve</h3>
+<p>Shapley is not a universal answer.</p>
+<ul>
+<li>It depends heavily on the utility function.</li>
+<li>It can be unstable when utility estimates are noisy.</li>
+<li>It assumes a particular fairness view; the symmetry axiom may be inappropriate when data has provenance, temporal dependence, augmentation structure, or source hierarchy.</li>
+<li>It is often too expensive for foundation model training.</li>
+<li>It gives a scalar summary, while real decisions may need richer explanations.</li>
+</ul>
+<p>The important point is not that Shapley is always correct. The important point is that it formalizes data value as an average counterfactual contribution.</p>
+<h2 id="family-3-semi-values-banzhaf-and-robust-valuation">Family 3: semi-values, Banzhaf, and robust valuation</h2>
+<p>Shapley is one member of a broader family of valuation rules called <strong>semi-values</strong>. A generic semi-value has the form</p>
+<p>$$
+\phi_i^{w}
+= \sum_{S \subseteq D \setminus \{z_i\}} w_{|S|}
+\Big[U(S \cup \{z_i\}) - U(S)\Big],
+$$</p>
+<p>where $w_{|S|}$ determines how much we care about coalitions of size $|S|$.</p>
+<p>Different weights lead to different notions of value.</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Informal behavior</th>
+<th>Typical motivation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Leave-one-out</td>
+<td>Focuses on the full dataset.</td>
+<td>Simple debugging near the current model.</td>
+</tr>
+<tr>
+<td>Shapley</td>
+<td>Averages over all coalition sizes with Shapley weights.</td>
+<td>Fair allocation of total utility.</td>
+</tr>
+<tr>
+<td>Banzhaf</td>
+<td>Samples coalitions with independent inclusion.</td>
+<td>Robustness and simpler sampling.</td>
+</tr>
+<tr>
+<td>Beta Shapley</td>
+<td>Uses beta-distributed weights over coalition sizes.</td>
+<td>Noise reduction and flexible emphasis on coalition regimes.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="banzhaf-value">Banzhaf value</h3>
+<p>The Banzhaf value averages marginal contributions over coalitions where each other point is independently included with probability $1/2$:</p>
+<p>$$
+\phi_i^{\mathrm{Banzhaf}}
+= \frac{1}{2^{n-1}}
+\sum_{S \subseteq D \setminus \{z_i\}}
+\Big[U(S \cup \{z_i\}) - U(S)\Big].
+$$</p>
+<p>Compared with Shapley, Banzhaf relaxes the efficiency requirement. This can be a feature rather than a bug. In noisy ML settings, forcing all value to sum exactly to $U(D)-U(\emptyset)$ may amplify noise. Banzhaf-style methods can be more robust to stochastic training and noisy performance estimates.</p>
+<h3 id="beta-shapley">Beta Shapley</h3>
+<p>Beta Shapley generalizes the weighting over coalition sizes using a beta distribution. Intuitively, it lets us choose whether to emphasize small, medium, or large coalitions.</p>
+<p>This is useful because different applications care about different regimes:</p>
+<ul>
+<li>data acquisition may care about small-to-medium coalitions;</li>
+<li>removal auditing may care about near-full coalitions;</li>
+<li>compensation may care about all coalitions more evenly;</li>
+<li>noisy label detection may benefit from weights that reduce variance.</li>
+</ul>
+<h3 id="data-oob">Data-OOB</h3>
+<p>For bagging models, out-of-bag estimates offer a computationally efficient way to estimate data value. The key idea is to reuse weak learners that were trained without a given data point and compare their behavior with learners that included it. This avoids repeated full retraining and can scale to large datasets in settings where bagging is natural.</p>
+<p>The broader lesson from semi-values is that valuation is not only about estimating a fixed formula more efficiently. It is also about choosing the right axioms and weights for the downstream decision.</p>
+<h2 id="family-4-gradient-based-data-attribution">Family 4: gradient-based data attribution</h2>
+<p>Shapley-style methods ask how utility changes when data enters or leaves the training set. Gradient-based methods ask a more local question:</p>
+<blockquote>
+<p>How did a training point influence a model parameter update, and how did that update affect a target prediction?</p>
+</blockquote>
+<p>This is especially useful for debugging individual predictions.</p>
+<h3 id="influence-functions">Influence functions</h3>
+<p>Influence functions approximate how the learned parameters would change if we upweighted a training point $z_i$ by a small amount. Let</p>
+<p>$$
+\hat{\theta} = \arg\min_\theta \frac{1}{n}\sum_{j=1}^n \ell(z_j, \theta).
+$$</p>
+<p>If $z_i$ is upweighted by $\epsilon$, the parameter change can be approximated by</p>
+<p>$$
+\frac{d \hat{\theta}_{\epsilon, i}}{d\epsilon}\bigg|_{\epsilon=0}
+= - H_{\hat{\theta}}^{-1} \nabla_\theta \ell(z_i, \hat{\theta}),
+$$</p>
+<p>where</p>
+<p>$$
+H_{\hat{\theta}} = \frac{1}{n}\sum_{j=1}^n \nabla_\theta^2 \ell(z_j, \hat{\theta})
+$$</p>
+<p>is the Hessian of the empirical risk.</p>
+<p>The influence of $z_i$ on the loss at a test point $z_{\mathrm{test}}$ is approximately</p>
+<p>$$
+I(z_i, z_{\mathrm{test}})
+= - \nabla_\theta \ell(z_{\mathrm{test}}, \hat{\theta})^\top
+H_{\hat{\theta}}^{-1}
+\nabla_\theta \ell(z_i, \hat{\theta}).
+$$</p>
+<p>If $I(z_i, z_{\mathrm{test}})$ is negative, upweighting $z_i$ reduces the test loss, so $z_i$ is helpful for that test point. If it is positive, $z_i$ is harmful.</p>
+<p>Influence functions are elegant because they connect prediction behavior to training data without retraining the model. The practical challenge is that modern neural networks are non-convex, high-dimensional, and expensive to invert through the Hessian.</p>
+<h3 id="tracin">TracIn</h3>
+<p>TracIn avoids explicit Hessian inversion by tracing the training process. The idea is that a training example influences a test example whenever a gradient step on the training example changes the test loss.</p>
+<p>A simplified TracIn score is</p>
+<p>$$
+\mathrm{TracIn}(z_i, z_{\mathrm{test}})
+= \sum_{t \in \mathcal{C}} \eta_t
+\nabla_\theta \ell(z_i, \theta_t)^\top
+\nabla_\theta \ell(z_{\mathrm{test}}, \theta_t),
+$$</p>
+<p>where $\mathcal{C}$ is a set of saved checkpoints and $\eta_t$ is the learning rate. If gradients align, training on $z_i$ tends to reduce the loss on $z_{\mathrm{test}}$; if gradients conflict, it may increase the loss.</p>
+<p>This gradient-similarity view is now widely used in data selection for large models. Instead of evaluating every candidate by retraining, we represent examples by gradient features and retrieve those most aligned with target tasks.</p>
+<h3 id="influence-for-targeted-instruction-tuning">Influence for targeted instruction tuning</h3>
+<p>For instruction tuning, the question is often not “which data improves average validation accuracy?” but rather:</p>
+<blockquote>
+<p>Which examples teach a target capability, such as mathematical reasoning, code generation, tool use, or safety refusal?</p>
+</blockquote>
+<p>A capability-conditioned value can be written as</p>
+<p>$$
+\phi_i^{\mathrm{target}}
+= \mathrm{sim}\left(g_i, g_{\mathrm{target}}\right),
+$$</p>
+<p>where $g_i$ is a gradient representation of candidate instruction $i$ and $g_{\mathrm{target}}$ is a gradient representation of a few examples or tasks that define the desired capability.</p>
+<p>This is different from generic data quality. A high-quality translation instruction may have low value for improving math reasoning. A messy but structurally useful reasoning example may be high-value for a reasoning-specific target.</p>
+<h3 id="local-vs-global-data-value">Local vs global data value</h3>
+<p>Gradient-based attribution is often <strong>local</strong>:</p>
+<ul>
+<li>local to a trained model,</li>
+<li>local to a test point or target capability,</li>
+<li>local to the optimization trajectory,</li>
+<li>local to a representation of gradients.</li>
+</ul>
+<p>This locality is a strength for debugging and targeted selection. It is a weakness for fair compensation or broad market pricing, where the desired value notion is usually more global.</p>
+<h2 id="family-5-learned-data-valuators-and-datamodels">Family 5: learned data valuators and datamodels</h2>
+<p>Another route is to learn the valuation function itself.</p>
+<h3 id="dvrl-learning-a-data-value-estimator">DVRL: learning a data value estimator</h3>
+<p>Data Valuation using Reinforcement Learning (DVRL) trains a data value estimator that decides how likely each training example should be selected. A predictor is trained on selected data, and the data value estimator receives a reward based on validation performance.</p>
+<p>The simplified loop is:</p>
+<pre class="mermaid">flowchart LR
+    X[Training example] --&gt; DVE[Data value estimator]
+    DVE --&gt; P[Selection probability]
+    P --&gt; M[Train predictor]
+    M --&gt; R[Validation reward]
+    R --&gt; DVE
+</pre>
+<p>This turns data valuation into a meta-learning problem. The value estimator does not need to satisfy Shapley axioms; it only needs to learn a selection policy that improves the target task.</p>
+<p>The advantage is adaptivity. The limitation is that the learned values are tied to the meta-training setup, validation reward, model class, and selection policy. They may not be easy to interpret as fair payments.</p>
+<h3 id="datamodels-predicting-predictions-from-training-subsets">Datamodels: predicting predictions from training subsets</h3>
+<p>Datamodeling takes a different view. For a fixed test example $x$, define a function that maps a training subset $S' \subseteq D$ to the model output on $x$ after training on $S'$:</p>
+<p>$$
+f_x(S') = \mathrm{output}(A(S'), x).
+$$</p>
+<p>A linear datamodel approximates this subset-to-prediction map as</p>
+<p>$$
+f_x(S') \approx \beta_x^\top \mathbf{1}_{S'},
+$$</p>
+<p>where $\mathbf{1}_{S'} \in \{0,1\}^n$ indicates which training examples are included in $S'$, and $\beta_x$ assigns a coefficient to each training example for the target prediction $x$.</p>
+<p>This is conceptually powerful. Instead of asking for a single global value, datamodels ask: <em>which training examples control this prediction?</em> If the approximation works, one can estimate dataset counterfactuals, identify brittle predictions, detect train-test leakage, and embed training examples by their prediction-level effects.</p>
+<p>The cost is high: fitting datamodels may require training many models on many random subsets. But as a scientific lens, datamodeling makes explicit something that is often hidden: model behavior is a function of the training set.</p>
+<h3 id="learned-value-vs-axiomatic-value">Learned value vs axiomatic value</h3>
+<p>Axiomatic valuation starts from principles such as fairness, symmetry, and efficiency. Learned valuation starts from predictive usefulness. They answer different questions.</p>
+<table>
+<thead>
+<tr>
+<th>Question</th>
+<th>Better matched family</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>How should contributors be compensated?</td>
+<td>Shapley / Banzhaf / group valuation</td>
+</tr>
+<tr>
+<td>Which examples should I keep for training?</td>
+<td>Learned valuator / influence / selection score</td>
+</tr>
+<tr>
+<td>Which examples caused this prediction?</td>
+<td>Influence / TracIn / datamodels</td>
+</tr>
+<tr>
+<td>Which data source should I acquire next?</td>
+<td>Distributional / acquisition-aware valuation</td>
+</tr>
+<tr>
+<td>Which clients helped the global model?</td>
+<td>Federated group valuation</td>
+</tr>
+</tbody>
+</table>
+<p>A common mistake is to use one type of value for all decisions. A score optimized for selection is not automatically a fair payment rule. A fair payment rule is not automatically the most efficient pruning criterion.</p>
+<h2 id="family-6-distributional-group-and-market-aware-valuation">Family 6: distributional, group, and market-aware valuation</h2>
+<p>Point-wise valuation is only one layer. In many applications, data comes from distributions, institutions, users, and pipelines.</p>
+<h3 id="distributional-value">Distributional value</h3>
+<p>Data Shapley assigns values to points in a fixed dataset. But in many settings, the real object of interest is a distribution. A hospital, user group, or data vendor does not only contribute a finite list of examples; it represents a sampling process.</p>
+<p>Distributional valuation asks how useful a point or source is with respect to an underlying data distribution. This can make values more stable and better suited for acquisition. Instead of asking whether a single rare example is valuable, we ask whether more data from its region would improve the learner.</p>
+<h3 id="group-value">Group value</h3>
+<p>Group valuation is necessary when the unit of ownership is not a single point. Examples:</p>
+<ul>
+<li>a hospital contributes a cohort of medical images;</li>
+<li>a mobile device contributes local user interactions;</li>
+<li>a data vendor contributes an entire corpus;</li>
+<li>a synthetic data generator contributes a batch of generated instructions;</li>
+<li>a company contributes proprietary logs.</li>
+</ul>
+<p>If we value only individual examples and sum them, we may miss group-level interaction. A source can be valuable because it has coverage, diversity, or complementarity with other sources.</p>
+<p>For groups $G_1, \dots, G_m$, a group utility is</p>
+<p>$$
+U(T) = \mathrm{Perf}\left(A\left(\bigcup_{j \in T} G_j\right); D_{\mathrm{val}}\right),
+$$</p>
+<p>where $T \subseteq \{1, \dots, m\}$. Then the players are groups rather than examples.</p>
+<h3 id="asymmetric-and-structure-aware-value">Asymmetric and structure-aware value</h3>
+<p>Classic Shapley assumes symmetry: if two players make identical marginal contributions, they should receive the same value. But modern data pipelines often have structure.</p>
+<p>Examples:</p>
+<ul>
+<li>augmented examples depend on original examples;</li>
+<li>synthetic data depends on a generator and prompt distribution;</li>
+<li>later instruction-tuning data depends on the pretrained model;</li>
+<li>federated updates arrive in time;</li>
+<li>data sources have ownership hierarchy;</li>
+<li>some data are derived from copyrighted or licensed corpora.</li>
+</ul>
+<p>In such cases, symmetry may erase important dependencies. A structure-aware valuation rule may need to respect temporal order, provenance, or dependency graphs.</p>
+<p>A simple example is original-versus-augmentation. If $z_j$ is an augmentation of $z_i$, equal marginal effects should not necessarily imply equal economic reward. The augmented point may exist only because the original point exists. This suggests a need for data valuation over graphs, not only sets.</p>
+<h3 id="data-markets-and-incentives">Data markets and incentives</h3>
+<p>In a data market, valuation is not just an ML problem. It becomes a mechanism design problem.</p>
+<p>A useful valuation rule should discourage undesirable behavior:</p>
+<ul>
+<li>uploading duplicates to inflate payment;</li>
+<li>splitting one dataset into many identities;</li>
+<li>hiding provenance;</li>
+<li>poisoning the validation set;</li>
+<li>contributing low-quality synthetic data that exploits the scoring rule;</li>
+<li>colluding with other data providers;</li>
+<li>optimizing for benchmark leakage rather than general utility.</li>
+</ul>
+<p>This connects data valuation to governance. Once a value score determines payment, reputation, or data access, contributors may optimize against it. The valuation rule itself becomes part of the system being optimized.</p>
+<h2 id="data-value-for-foundation-models">Data value for foundation models</h2>
+<p>Foundation models change the scale and semantics of data valuation.</p>
+<p>In classical supervised learning, a data point usually means one labeled example and the utility is often validation accuracy. In foundation models, the unit and utility are more ambiguous.</p>
+<table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>Data unit</th>
+<th>Utility</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pretraining</td>
+<td>token, document, website, image-text pair, video clip</td>
+<td>broad next-token or representation quality</td>
+</tr>
+<tr>
+<td>Instruction tuning</td>
+<td>instruction-response pair, conversation, preference trace</td>
+<td>target capability, helpfulness, safety, format following</td>
+</tr>
+<tr>
+<td>RLHF / preference optimization</td>
+<td>pairwise preference, reward label, rubric</td>
+<td>preference alignment, reward model calibration</td>
+</tr>
+<tr>
+<td>Retrieval-augmented generation</td>
+<td>document chunk, memory item, tool result</td>
+<td>factuality, answer accuracy, citation quality</td>
+</tr>
+<tr>
+<td>Continual adaptation</td>
+<td>new task stream, domain batch, user feedback</td>
+<td>retention, plasticity, forward transfer</td>
+</tr>
+<tr>
+<td>Multimodal learning</td>
+<td>image-text pair, video-caption pair, region-text annotation</td>
+<td>alignment, grounding, temporal consistency</td>
+</tr>
+</tbody>
+</table>
+<h3 id="data-value-is-capability-conditioned">Data value is capability-conditioned</h3>
+<p>For a general instruction dataset $D$ and a target capability $c$, the value of example $z_i$ should be written as</p>
+<p>$$
+\phi_i(c) = \mathrm{Val}(z_i; D, A, U_c),
+$$</p>
+<p>where $U_c$ measures performance on capability $c$.</p>
+<p>This matters because one dataset may contain many latent skills. An instruction about planning may help agentic tool use. A chain-of-thought example may help math but hurt concise response style. A refusal example may improve safety but reduce compliance on benign edge cases if over-sampled.</p>
+<p>Generic quality scores are insufficient. A polished response is not necessarily high-value. A noisy example can be valuable if it teaches a missing skill. A beautiful image-text pair can be low-value if it is redundant with existing alignment data.</p>
+<h3 id="data-value-is-stage-dependent">Data value is stage-dependent</h3>
+<p>The same data can have different values across the model lifecycle.</p>
+<ul>
+<li>In early pretraining, broad coverage is valuable.</li>
+<li>In late pretraining, rare high-quality domains may matter more.</li>
+<li>In instruction tuning, format and task diversity become important.</li>
+<li>In preference learning, label consistency and preference separability matter.</li>
+<li>In continual learning, examples that protect old skills may be valuable even if they do not improve the new task.</li>
+</ul>
+<p>This suggests a time-indexed value:</p>
+<p>$$
+\phi_i^{(t)} = \mathrm{Val}(z_i; D_t, A_t, U_t),
+$$</p>
+<p>where $t$ indexes the training stage.</p>
+<h3 id="data-value-is-interaction-heavy">Data value is interaction-heavy</h3>
+<p>Foundation models learn from mixtures. A data source can be valuable not because it is individually strong, but because it balances another source.</p>
+<p>Examples:</p>
+<ul>
+<li>code data may improve reasoning but distort natural language style if overrepresented;</li>
+<li>synthetic math data may help step-by-step reasoning but reduce diversity;</li>
+<li>safety data may improve refusal calibration but create over-refusal when mixed poorly;</li>
+<li>multilingual data may improve cross-lingual transfer but compete for capacity;</li>
+<li>multimodal grounding data may improve visual reasoning only when paired with enough language instruction data.</li>
+</ul>
+<p>The unit of value is often not a point but a mixture coefficient.</p>
+<p>Let training minimize a mixture objective:</p>
+<p>$$
+\mathcal{L}(\theta; \alpha)
+= \sum_{k=1}^K \alpha_k \mathbb{E}_{z \sim P_k}[\ell(z, \theta)],
+$$</p>
+<p>where $P_k$ are data sources and $\alpha_k$ are mixture weights. The value of a source is related to the derivative of downstream utility with respect to its mixture weight:</p>
+<p>$$
+\frac{\partial U}{\partial \alpha_k}.
+$$</p>
+<p>This moves us from point-wise valuation to data-mixture optimization.</p>
+<h3 id="multimodal-data-value">Multimodal data value</h3>
+<p>For multimodal models, data quality is not only about label correctness. It also includes alignment:</p>
+<ul>
+<li>Does the text describe the image accurately?</li>
+<li>Are regions grounded to the right entities?</li>
+<li>Does the video caption capture temporal order?</li>
+<li>Are visual attributes distinguishable?</li>
+<li>Does the annotation include compositional relations?</li>
+<li>Is the pair informative or merely generic?</li>
+</ul>
+<p>A caption like “a dog in a park” may be correct but low-value if the image contains richer relations. A region-level annotation may be more valuable than a whole-image caption for grounding. A temporally precise video description may be more valuable than a generic summary for video-language learning.</p>
+<p>A useful multimodal value may need to combine:</p>
+<p>$$
+\phi_i = \lambda_1 \phi_i^{\mathrm{semantic}}
++ \lambda_2 \phi_i^{\mathrm{alignment}}
++ \lambda_3 \phi_i^{\mathrm{grounding}}
++ \lambda_4 \phi_i^{\mathrm{diversity}}
++ \lambda_5 \phi_i^{\mathrm{downstream}}.
+$$</p>
+<p>The hard part is not writing this equation. The hard part is making the components measurable, robust, and predictive of training outcomes.</p>
+<h2 id="practical-recipe">Practical recipe</h2>
+<p>A practical data valuation workflow starts from the decision to be made.</p>
+<pre class="mermaid">flowchart TD
+    Q[What decision will use the value?]
+    Q --&gt; A[Debug a prediction]
+    Q --&gt; B[Remove noisy data]
+    Q --&gt; C[Select data under budget]
+    Q --&gt; D[Pay contributors]
+    Q --&gt; E[Acquire new data]
+    Q --&gt; F[Audit governance risk]
+
+    A --&gt; A1[Influence functions / TracIn / datamodels]
+    B --&gt; B1[LOO / Data-OOB / Beta Shapley / influence]
+    C --&gt; C1[Gradient similarity / learned valuator / coreset]
+    D --&gt; D1[Group Shapley / Banzhaf / market-aware valuation]
+    E --&gt; E1[Distributional value / coverage / active learning]
+    F --&gt; F1[Provenance-aware and structure-aware value]
+</pre>
+<h3 id="step-1-choose-the-utility">Step 1: choose the utility</h3>
+<p>The most important design choice is the utility function.</p>
+<p>Bad utility:</p>
+<p>$$
+U(S) = \text{accuracy on a convenient but mismatched validation set}.
+$$</p>
+<p>Better utility:</p>
+<p>$$
+U(S) = \sum_{k=1}^K \omega_k \mathrm{Perf}_k(A(S)) - \lambda \mathrm{Risk}(A(S)),
+$$</p>
+<p>where $\mathrm{Perf}_k$ are task-specific metrics and $\mathrm{Risk}$ may include calibration error, unsafe behavior, bias, privacy leakage, or memorization.</p>
+<p>The utility defines the value. If the utility ignores safety, unsafe data can look valuable. If the utility overweights a benchmark, benchmark-specific data can dominate. If the utility ignores minority groups, data from those groups may be undervalued.</p>
+<h3 id="step-2-choose-the-valuation-unit">Step 2: choose the valuation unit</h3>
+<p>If the goal is relabeling, use point-level value. If the goal is payment, use contributor-level or group-level value. If the goal is data acquisition, use distribution-level value. If the goal is pretraining mixture design, use source-level or mixture-level value.</p>
+<h3 id="step-3-choose-the-computational-approximation">Step 3: choose the computational approximation</h3>
+<p>A rough guide:</p>
+<table>
+<thead>
+<tr>
+<th>Scale</th>
+<th>Reasonable methods</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Small tabular / classical ML</td>
+<td>LOO, Shapley, KNN-Shapley, Data-OOB</td>
+</tr>
+<tr>
+<td>Medium deep learning</td>
+<td>TMC-Shapley, influence, TracIn, learned valuators</td>
+</tr>
+<tr>
+<td>Large LLM fine-tuning</td>
+<td>gradient similarity, low-rank gradient features, targeted selection</td>
+</tr>
+<tr>
+<td>Federated / institutional data</td>
+<td>group Shapley, Banzhaf, client-level contribution, update attribution</td>
+</tr>
+<tr>
+<td>Data market</td>
+<td>group valuation + mechanism design + provenance constraints</td>
+</tr>
+</tbody>
+</table>
+<h3 id="step-4-validate-values-by-interventions">Step 4: validate values by interventions</h3>
+<p>A value score is only useful if it predicts interventions. Common checks:</p>
+<ol>
+<li>Remove low-value data and retrain. Does performance improve or stay stable?</li>
+<li>Remove high-value data. Does performance drop?</li>
+<li>Relabel low-value suspicious data. Does value increase?</li>
+<li>Acquire more data similar to high-value data. Does performance improve?</li>
+<li>Recompute values across seeds. Are rankings stable?</li>
+<li>Change the validation distribution. Which values change?</li>
+<li>Compare across models. Are values transferable?</li>
+</ol>
+<p>A valuation method should not only produce plausible rankings. It should survive counterfactual tests.</p>
+<h3 id="step-5-monitor-selection-feedback-loops">Step 5: monitor selection feedback loops</h3>
+<p>Once data values are used for selection, the training distribution changes. The value scores should be recomputed or updated.</p>
+<p>A one-shot selection rule can create failure modes:</p>
+<ul>
+<li>it removes hard but necessary data;</li>
+<li>it over-selects easy examples;</li>
+<li>it amplifies duplicates;</li>
+<li>it narrows the distribution;</li>
+<li>it overfits to the validation set;</li>
+<li>it undervalues future-useful data.</li>
+</ul>
+<p>Data valuation is therefore often an iterative control problem, not a static scoring problem.</p>
+<h2 id="failure-modes">Failure modes</h2>
+<h3 id="1-valuing-data-against-the-wrong-objective">1. Valuing data against the wrong objective</h3>
+<p>If the validation set is wrong, the value score is wrong. A data point that improves a narrow benchmark may hurt deployment. A source that improves average accuracy may worsen calibration or fairness.</p>
+<p>The utility function is the constitution of the valuation system. Every omitted objective becomes a blind spot.</p>
+<h3 id="2-treating-data-value-as-intrinsic">2. Treating data value as intrinsic</h3>
+<p>A value score estimated for one model, task, or training stage may not transfer. A sample can be high-value for a small model because it teaches a simple pattern but low-value for a large model that already knows the pattern. A sample can be high-value for robustness but low-value for in-domain accuracy.</p>
+<p>The safer statement is:</p>
+<p>$$
+\phi_i \text{ is valid under } (D, A, U, D_{\mathrm{eval}}, \text{budget}).
+$$</p>
+<h3 id="3-ignoring-interactions">3. Ignoring interactions</h3>
+<p>Point-wise values can miss complementarity. This is common in long-tail learning, multimodal grounding, and compositional tasks. A single rare example may look unimportant, while a cluster of rare examples is essential.</p>
+<p>This suggests using group valuation, class-conditioned valuation, or diversity-aware selection rather than pure point ranking.</p>
+<h3 id="4-rewarding-duplicates">4. Rewarding duplicates</h3>
+<p>If the valuation rule does not penalize redundancy, contributors can upload near-duplicates. Shapley-style averaging handles redundancy better than simple count-based payment, but duplicates can still create complications when the utility estimator is noisy or the grouping rule is poorly specified.</p>
+<h3 id="5-utility-noise-and-unstable-ranking">5. Utility noise and unstable ranking</h3>
+<p>Deep learning training is stochastic. Validation metrics are noisy. Small differences in utility can cause large changes in rankings. This is especially problematic when value scores determine payment or deletion.</p>
+<p>Robustness should be measured explicitly:</p>
+<ul>
+<li>rank correlation across seeds;</li>
+<li>confidence intervals for values;</li>
+<li>sensitivity to validation subsets;</li>
+<li>stability under small perturbations;</li>
+<li>agreement across valuation methods.</li>
+</ul>
+<h3 id="6-negative-value-is-not-always-bad-data">6. Negative value is not always bad data</h3>
+<p>A data point can have negative value for several reasons:</p>
+<ul>
+<li>it is mislabeled;</li>
+<li>it is out-of-distribution;</li>
+<li>it conflicts with the current objective;</li>
+<li>it represents a minority distribution ignored by the utility;</li>
+<li>it is useful for robustness but harmful for average accuracy;</li>
+<li>it is correct but too hard for the current model.</li>
+</ul>
+<p>Therefore, negative value should trigger diagnosis, not automatic deletion.</p>
+<h3 id="7-strategic-manipulation">7. Strategic manipulation</h3>
+<p>In markets or federated systems, contributors may react to the valuation rule. If payment rewards marginal accuracy, providers may optimize for benchmark leakage. If payment rewards uniqueness, providers may create artificial diversity. If payment rewards volume, providers may add duplicates.</p>
+<p>A valuation mechanism should be paired with provenance checks, anti-duplication rules, robust validation, and audit trails.</p>
+<h3 id="8-privacy-leakage">8. Privacy leakage</h3>
+<p>Data attribution can reveal which training examples influenced which predictions. This is useful for transparency but risky for privacy. A high influence score may expose membership, sensitive content, or proprietary data.</p>
+<p>Privacy-aware data valuation remains underdeveloped. It may require differential privacy, aggregation, secure computation, or restricted disclosure.</p>
+<h2 id="open-problems">Open problems</h2>
+<h3 id="1-data-valuation-for-trillion-token-pretraining">1. Data valuation for trillion-token pretraining</h3>
+<p>Most principled valuation methods are far too expensive for pretraining-scale corpora. We need estimators that work with streaming data, partial training runs, proxy models, and cheap signals while still predicting final utility.</p>
+<p>A promising direction is multi-fidelity valuation:</p>
+<p>$$
+\phi_i^{\mathrm{large}} \approx f(\phi_i^{\mathrm{small}}, \phi_i^{\mathrm{proxy}}, \phi_i^{\mathrm{gradient}}, \phi_i^{\mathrm{metadata}}).
+$$</p>
+<p>The challenge is calibration. Proxy values can be systematically biased.</p>
+<h3 id="2-capability-conditioned-value">2. Capability-conditioned value</h3>
+<p>For foundation models, data value should be indexed by capability:</p>
+<p>$$
+\phi_i(c_1), \phi_i(c_2), \dots, \phi_i(c_K).
+$$</p>
+<p>An example can be valuable for reasoning, neutral for factuality, and harmful for safety. Scalar value may be too compressed. A vector-valued data value may better match model behavior.</p>
+<h3 id="3-multimodal-and-temporal-data-value">3. Multimodal and temporal data value</h3>
+<p>For images, videos, robotics trajectories, and medical data, value depends on structure:</p>
+<ul>
+<li>spatial grounding;</li>
+<li>temporal consistency;</li>
+<li>modality alignment;</li>
+<li>action causality;</li>
+<li>anatomical or physical constraints;</li>
+<li>rare event coverage.</li>
+</ul>
+<p>Existing point-wise text-centric valuation methods do not directly capture these dimensions.</p>
+<h3 id="4-coalition-and-hierarchy-aware-valuation">4. Coalition and hierarchy-aware valuation</h3>
+<p>Data is rarely independent. It has ownership hierarchy, provenance graphs, augmentation relations, synthetic generation chains, and temporal dependencies. A future valuation framework should operate over structured objects:</p>
+<p>$$
+\mathcal{G} = (V, E),
+$$</p>
+<p>where nodes are data units or sources and edges encode derivation, ownership, similarity, or temporal precedence.</p>
+<h3 id="5-causal-data-value">5. Causal data value</h3>
+<p>Most data valuation is associational: it measures changes in utility under inclusion or exclusion. But inclusion is not always a clean causal intervention. Data collection policies, labeling processes, and source distributions introduce confounding.</p>
+<p>A causal notion of data value would ask:</p>
+<blockquote>
+<p>What is the effect of intervening on the data-generation process, not merely adding or removing observed samples?</p>
+</blockquote>
+<p>This is particularly important for data acquisition and policy decisions.</p>
+<h3 id="6-valuation-under-continual-learning">6. Valuation under continual learning</h3>
+<p>In continual learning, data value is dynamic. A replay example may be valuable because it prevents forgetting, not because it improves the current task. A new example may be valuable because it opens future transfer, not because it immediately improves validation accuracy.</p>
+<p>A continual value might decompose into:</p>
+<p>$$
+\phi_i^{\mathrm{continual}}
+= \phi_i^{\mathrm{plasticity}}
++ \phi_i^{\mathrm{stability}}
++ \phi_i^{\mathrm{transfer}}
+- \phi_i^{\mathrm{interference}}.
+$$</p>
+<p>This is especially relevant for vision-language models, agents, and personalization systems.</p>
+<h3 id="7-incentive-compatible-data-markets">7. Incentive-compatible data markets</h3>
+<p>If data value determines payment, the valuation rule becomes a target for manipulation. A complete data market needs:</p>
+<ul>
+<li>valuation;</li>
+<li>provenance;</li>
+<li>privacy;</li>
+<li>anti-collusion;</li>
+<li>duplicate detection;</li>
+<li>legal constraints;</li>
+<li>dynamic pricing;</li>
+<li>contributor reputation;</li>
+<li>auditability.</li>
+</ul>
+<p>This is more than an ML scoring problem. It is a socio-technical system.</p>
+<h3 id="8-benchmarks-that-evaluate-values-not-only-models">8. Benchmarks that evaluate values, not only models</h3>
+<p>A valuation benchmark should test whether values lead to good decisions:</p>
+<ul>
+<li>Can low-value points reveal label noise?</li>
+<li>Can high-value points improve data acquisition?</li>
+<li>Can values transfer across models?</li>
+<li>Can values remain stable across seeds?</li>
+<li>Can values detect harmful data?</li>
+<li>Can values support fair group compensation?</li>
+</ul>
+<p>The output of a valuation method is not a prediction. It is a decision-support signal. The benchmark should reflect that.</p>
+<h2 id="takeaways">Takeaways</h2>
+<ol>
+<li>Data value is <strong>context-dependent</strong>. It depends on the dataset, model, algorithm, utility, evaluation distribution, and decision rule.</li>
+<li>Data value is <strong>counterfactual</strong>. It asks what changes when data is added, removed, reweighted, or replaced.</li>
+<li>Data value is often <strong>non-additive</strong>. Interactions, redundancy, and complementarity matter.</li>
+<li>Shapley-style methods provide a principled fairness lens but can be expensive and may rely on axioms that do not fit every ML pipeline.</li>
+<li>Influence-based methods are useful for local debugging and targeted selection but are not automatically fair payment rules.</li>
+<li>Learned valuators and datamodels can capture practical utility but depend heavily on meta-training and subset sampling.</li>
+<li>Foundation models require capability-conditioned, stage-dependent, multimodal, and mixture-level notions of value.</li>
+<li>Data markets require more than value estimation: they need incentive-compatible mechanisms and governance.</li>
+</ol>
+<p>A concise final definition:</p>
+<blockquote>
+<p>A data value is a decision-dependent estimate of how a data unit, group, source, or distribution changes the behavior, utility, risk, or economic payoff of a learning system under counterfactual intervention.</p>
+</blockquote>
+<h2 id="references">References</h2>
+<ul>
+<li>Ghorbani, A. and Zou, J. (2019). <a href="https://proceedings.mlr.press/v97/ghorbani19c.html">Data Shapley: Equitable Valuation of Data for Machine Learning</a>. ICML.</li>
+<li>Koh, P. W. and Liang, P. (2017). <a href="https://proceedings.mlr.press/v70/koh17a.html">Understanding Black-box Predictions via Influence Functions</a>. ICML.</li>
+<li>Jia, R., Dao, D., Wang, B., et al. (2019). <a href="https://arxiv.org/abs/1908.08619">Efficient Task-Specific Data Valuation for Nearest Neighbor Algorithms</a>. PVLDB.</li>
+<li>Yoon, J., Arik, S. O., and Pfister, T. (2020). <a href="https://proceedings.mlr.press/v119/yoon20a.html">Data Valuation using Reinforcement Learning</a>. ICML.</li>
+<li>Ghorbani, A., Kim, M. P., and Zou, J. (2020). <a href="https://arxiv.org/abs/2002.12334">A Distributional Framework for Data Valuation</a>. ICML.</li>
+<li>Pruthi, G., Liu, F., Kale, S., and Sundararajan, M. (2020). <a href="https://arxiv.org/abs/2002.08484">Estimating Training Data Influence by Tracing Gradient Descent</a>. NeurIPS.</li>
+<li>Kwon, Y. and Zou, J. (2022). <a href="https://proceedings.mlr.press/v151/kwon22a.html">Beta Shapley: A Unified and Noise-reduced Data Valuation Framework for Machine Learning</a>. AISTATS.</li>
+<li>Sim, R. H. L., Xu, X., and Low, B. K. H. (2022). <a href="https://www.ijcai.org/proceedings/2022/782">Data Valuation in Machine Learning: “Ingredients”, Strategies, and Open Challenges</a>. IJCAI Survey Track.</li>
+<li>Ilyas, A., Park, S. M., Engstrom, L., Leclerc, G., and Madry, A. (2022). <a href="https://arxiv.org/abs/2202.00622">Datamodels: Predicting Predictions from Training Data</a>. ICML.</li>
+<li>Wang, J. T. and Jia, R. (2023). <a href="https://arxiv.org/abs/2205.15466">Data Banzhaf: A Robust Data Valuation Framework for Machine Learning</a>. AISTATS.</li>
+<li>Kwon, Y. and Zou, J. (2023). <a href="https://arxiv.org/abs/2304.07718">Data-OOB: Out-of-bag Estimate as a Simple and Efficient Data Value</a>. ICML.</li>
+<li>Jiang, K. F., Liang, W., Zou, J., and Kwon, Y. (2023). <a href="https://arxiv.org/abs/2306.10577">OpenDataVal: a Unified Benchmark for Data Valuation</a>. NeurIPS Datasets and Benchmarks.</li>
+<li>Xia, M., Malladi, S., Gururangan, S., Arora, S., and Chen, D. (2024). <a href="https://arxiv.org/abs/2402.04333">LESS: Selecting Influential Data for Targeted Instruction Tuning</a>. ICML.</li>
+<li>Liu, Z., Zhou, K., Zhao, W. X., Gao, D., Li, Y., and Wen, J.-R. (2024). <a href="https://arxiv.org/abs/2403.09559">Less is More: High-value Data Selection for Visual Instruction Tuning</a>. arXiv.</li>
+<li>Xie, T., Li, H., Bai, A., and Hsieh, C.-J. (2024). <a href="https://arxiv.org/abs/2401.09031">Data Attribution for Diffusion Models: Timestep-induced Bias in Influence Estimation</a>. arXiv.</li>
+<li>pyDVL contributors. <a href="https://pydvl.org/stable/">pyDVL: Python Data Valuation Library</a>.</li>
+<li>OpenDataVal contributors. <a href="https://opendataval.github.io/">OpenDataVal benchmark and toolkit</a>.</li>
+</ul>
+        </div>
+      </article>
+
+      <footer class="footer">
+        <a href="index.html">Back to Blog</a> · © 2026 Canran Xiao. Powered by GitHub Pages.
+      </footer>
+    </main>
+  </body>
+</html>

@@ -12,4 +12,5 @@ This is a static GitHub Pages personal homepage.
 ## Files
 
 - `index.html`: the homepage.
+- `blog/`: blog index, article pages, and blog assets.
 - `assets/profile-campus.png`: profile photo used by the homepage.
