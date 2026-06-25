@@ -1,0 +1,758 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Canran Xiao | 肖粲然</title>
+    <meta
+      name="description"
+      content="Personal academic homepage of Canran Xiao, postdoctoral fellow at Sun Yat-sen University."
+    >
+    <style>
+      :root {
+        --paper: #ffffff;
+        --soft: #f7fbff;
+        --ink: #17324d;
+        --muted: #62788e;
+        --line: #d8e7f5;
+        --accent: #3e8ec9;
+        --accent-2: #ee9fc0;
+        --accent-soft: #edf7ff;
+        --pink-soft: #fff3f8;
+        --link: #246fa7;
+        --glow: rgba(82, 148, 202, 0.16);
+        --pink-glow: rgba(238, 159, 192, 0.16);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        background:
+          linear-gradient(135deg, #eff8ff 0%, #fff4fa 42%, #ffffff 78%);
+        color: var(--ink);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+        font-size: 16px;
+        line-height: 1.68;
+      }
+
+      a {
+        color: var(--link);
+        text-decoration: none;
+      }
+
+      a:hover,
+      a:focus {
+        color: var(--accent);
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+
+      .site-header {
+        border-bottom: 1px solid var(--line);
+        background: linear-gradient(90deg, rgba(244, 250, 255, 0.94), rgba(255, 247, 251, 0.94));
+        box-shadow: 0 8px 24px rgba(82, 148, 202, 0.06);
+      }
+
+      .nav-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        max-width: 1040px;
+        margin: 0 auto;
+        padding: 12px 24px;
+        gap: 20px;
+      }
+
+      .brand {
+        color: var(--ink);
+        font-weight: 650;
+        white-space: nowrap;
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+        gap: 18px;
+        font-size: 14px;
+      }
+
+      .nav-links a {
+        color: var(--muted);
+      }
+
+      .nav-links a:hover,
+      .nav-links a:focus {
+        color: var(--accent);
+      }
+
+      .page {
+        max-width: 1040px;
+        margin: 0 auto;
+        padding: 0 24px 40px;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 318px;
+        gap: 42px;
+        align-items: start;
+        padding: 50px 0 34px;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        margin-bottom: 8px;
+        font-size: 34px;
+        line-height: 1.2;
+        font-weight: 680;
+        color: #132f4c;
+      }
+
+      h2 {
+        position: relative;
+        margin: 0 0 18px;
+        padding-left: 15px;
+        font-size: 23px;
+        line-height: 1.3;
+        font-weight: 650;
+        color: #173d63;
+      }
+
+      h2::before {
+        position: absolute;
+        top: 4px;
+        left: 0;
+        width: 4px;
+        height: 24px;
+        border-radius: 999px;
+        background: linear-gradient(180deg, var(--accent), var(--accent-2));
+        content: "";
+      }
+
+      h3 {
+        margin-bottom: 6px;
+        font-size: 17px;
+        line-height: 1.4;
+      }
+
+      .subtitle {
+        margin-bottom: 20px;
+        color: var(--muted);
+        font-size: 18px;
+      }
+
+      .meta-list {
+        display: grid;
+        gap: 7px;
+        margin: 0 0 18px;
+      }
+
+      .meta-item {
+        display: grid;
+        grid-template-columns: 24px minmax(0, 1fr);
+        gap: 9px;
+        color: var(--muted);
+      }
+
+      .meta-item span:first-child {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        border: 1px solid rgba(216, 231, 245, 0.82);
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.72);
+        color: var(--accent);
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .profile {
+        margin: 0;
+      }
+
+      .profile img {
+        display: block;
+        width: 100%;
+        aspect-ratio: 3 / 4;
+        object-fit: cover;
+        object-position: center bottom;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        box-shadow: 0 18px 38px var(--glow), 0 0 0 8px rgba(255, 255, 255, 0.56);
+      }
+
+      .profile figcaption {
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 13px;
+        text-align: center;
+      }
+
+      .research-bento {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      .research-card {
+        display: block;
+        min-height: 122px;
+        padding: 12px;
+        border: 1px solid #c9e1f4;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #f0f9ff, #fff6fb);
+        color: #1d659d;
+        box-shadow: 0 5px 14px rgba(82, 148, 202, 0.07);
+        transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+      }
+
+      .research-card:hover,
+      .research-card:focus {
+        border-color: #b7d8f0;
+        box-shadow: 0 12px 26px rgba(82, 148, 202, 0.12), 0 8px 20px var(--pink-glow);
+        text-decoration: none;
+        transform: translateY(-2px);
+      }
+
+      .research-card strong {
+        display: block;
+        margin-bottom: 7px;
+        color: #173d63;
+        font-size: 14px;
+        line-height: 1.25;
+      }
+
+      .research-card p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.45;
+      }
+
+      .section {
+        padding: 28px 0;
+        border-top: 1px solid var(--line);
+      }
+
+      .note {
+        margin-top: 18px;
+        padding: 12px 14px;
+        border-left: 3px solid var(--accent-2);
+        background: linear-gradient(90deg, #edf8ff, #fff5fa);
+        color: #2b4b66;
+      }
+
+      .section-lead {
+        margin: -8px 0 18px;
+        color: var(--muted);
+        font-size: 15px;
+      }
+
+      .news-list {
+        display: grid;
+        position: relative;
+        gap: 14px;
+        margin: 0;
+        padding: 0 0 0 20px;
+        list-style: none;
+      }
+
+      .news-list::before {
+        position: absolute;
+        top: 8px;
+        bottom: 8px;
+        left: 5px;
+        width: 2px;
+        border-radius: 999px;
+        background: linear-gradient(180deg, var(--accent), var(--accent-2));
+        content: "";
+      }
+
+      .news-list li {
+        position: relative;
+        display: grid;
+        grid-template-columns: 112px minmax(0, 1fr);
+        gap: 14px;
+        align-items: start;
+        padding: 14px 16px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: linear-gradient(135deg, rgba(239, 248, 255, 0.9), rgba(255, 246, 251, 0.86));
+        box-shadow: 0 8px 22px rgba(82, 148, 202, 0.07);
+      }
+
+      .news-list li::before {
+        position: absolute;
+        top: 18px;
+        left: -19px;
+        width: 12px;
+        height: 12px;
+        border: 3px solid #fff;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+        box-shadow: 0 0 0 1px #c9e1f4, 0 6px 14px rgba(82, 148, 202, 0.15);
+        content: "";
+      }
+
+      .date {
+        color: #d06a98;
+        font-size: 14px;
+        font-weight: 650;
+      }
+
+      .news-icon {
+        margin-left: 6px;
+        white-space: nowrap;
+      }
+
+      .publication-list {
+        display: grid;
+        gap: 16px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .publication {
+        display: grid;
+        grid-template-columns: 104px minmax(0, 1fr);
+        gap: 18px;
+        padding: 16px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(249, 252, 255, 0.92));
+        box-shadow: 0 8px 22px rgba(82, 148, 202, 0.07);
+        transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+      }
+
+      .publication:hover {
+        border-color: #b9d8ef;
+        box-shadow: 0 14px 30px rgba(82, 148, 202, 0.12), 0 8px 24px var(--pink-glow);
+        transform: translateY(-1px);
+      }
+
+      .publication:hover .paper-highlight,
+      .publication:focus-within .paper-highlight {
+        max-height: 80px;
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .venue {
+        position: relative;
+        align-self: start;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 88px;
+        min-height: 34px;
+        padding: 6px 10px 6px 12px;
+        overflow: hidden;
+        border: 1px solid #c9def1;
+        border-radius: 8px;
+        background:
+          linear-gradient(135deg, rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0.32)),
+          linear-gradient(135deg, var(--accent-soft), var(--pink-soft));
+        color: #236fa9;
+        font-size: 13px;
+        font-weight: 700;
+        line-height: 1.25;
+        text-align: center;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 8px 18px rgba(82, 148, 202, 0.08);
+      }
+
+      .venue::before {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 4px;
+        background: linear-gradient(180deg, var(--accent), var(--accent-2));
+        content: "";
+      }
+
+      .publication p {
+        margin-bottom: 5px;
+      }
+
+      .paper-title {
+        font-weight: 650;
+      }
+
+      .paper-highlight {
+        max-height: 0;
+        margin: 0;
+        overflow: hidden;
+        color: #456176;
+        font-size: 13px;
+        line-height: 1.5;
+        opacity: 0;
+        transform: translateY(-4px);
+        transition: max-height 180ms ease, opacity 180ms ease, transform 180ms ease, margin 180ms ease;
+      }
+
+      .publication:hover .paper-highlight,
+      .publication:focus-within .paper-highlight {
+        margin-top: 8px;
+      }
+
+      .authors,
+      .booktitle {
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .me {
+        color: #17324d;
+        font-weight: 750;
+        text-decoration: underline;
+        text-decoration-thickness: 1.5px;
+        text-underline-offset: 3px;
+      }
+
+      .corresponding {
+        color: #d06a98;
+        font-weight: 800;
+      }
+
+      .service-list {
+        margin: 0;
+        padding-left: 18px;
+      }
+
+      .service-list li {
+        margin-bottom: 10px;
+      }
+
+      .service-panel {
+        padding: 18px 18px 8px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: linear-gradient(135deg, #f4faff, #fff6fb);
+        box-shadow: 0 10px 26px rgba(82, 148, 202, 0.08);
+      }
+
+      .footer {
+        padding: 26px 0 18px;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      @media (max-width: 780px) {
+        .nav-wrap {
+          align-items: flex-start;
+          flex-direction: column;
+          gap: 8px;
+        }
+
+        .nav-links {
+          justify-content: flex-start;
+          gap: 12px;
+        }
+
+        .hero {
+          grid-template-columns: 1fr;
+        }
+
+        .hero {
+          padding-top: 34px;
+        }
+
+        .profile {
+          max-width: 340px;
+        }
+
+        h1 {
+          font-size: 30px;
+        }
+
+        .publication,
+        .news-list li {
+          grid-template-columns: 1fr;
+          gap: 8px;
+        }
+
+        .research-bento {
+          grid-template-columns: 1fr;
+        }
+
+        .research-card {
+          min-height: 0;
+        }
+
+        .paper-highlight {
+          max-height: none;
+          margin-top: 8px;
+          opacity: 1;
+          transform: none;
+        }
+
+        .venue {
+          justify-content: flex-start;
+          width: fit-content;
+          min-width: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="nav-wrap">
+        <a class="brand" href="#home">Canran Xiao</a>
+        <nav class="nav-links" aria-label="Primary navigation">
+          <a href="#about">About</a>
+          <a href="#news">News</a>
+          <a href="#publications">Selected Publications</a>
+          <a href="#service">Service</a>
+          <a href="https://scholar.google.com/citations?user=TQIKwMIAAAAJ&hl=zh-TW">Google Scholar</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="page" id="home">
+      <section class="hero" aria-label="Profile">
+        <div>
+          <h1>Canran Xiao | 肖粲然</h1>
+          <p class="subtitle">
+            Postdoctoral Fellow at Sun Yat-sen University
+          </p>
+
+          <div class="meta-list" aria-label="Profile details">
+            <div class="meta-item">
+              <span>📍</span>
+              <span><a href="https://www.sysu.edu.cn/">Sun Yat-sen University</a>, Shenzhen, Guangdong, China</span>
+            </div>
+            <div class="meta-item">
+              <span>🎓</span>
+              <span>Ph.D., Central South University</span>
+            </div>
+            <div class="meta-item">
+              <span>@</span>
+              <span><a href="mailto:xiaocr3@mail.sysu.edu.cn">xiaocr3@mail.sysu.edu.cn</a></span>
+            </div>
+            <div class="meta-item">
+              <span>↗</span>
+              <span>
+                <a href="https://scholar.google.com/citations?user=TQIKwMIAAAAJ&hl=zh-TW">Google Scholar</a>
+              </span>
+            </div>
+          </div>
+
+          <div class="research-bento" aria-label="Research interests">
+            <a class="research-card" href="https://scholar.google.com/citations?view_op=search_authors&hl=zh-TW&mauthors=label:data_management">
+              <strong>Data Management</strong>
+              <p>Organizing, assessing, and selecting high-quality data for reliable systems.</p>
+            </a>
+            <a class="research-card" href="https://scholar.google.com/citations?view_op=search_authors&hl=zh-TW&mauthors=label:data_intelligence">
+              <strong>Data Intelligence</strong>
+              <p>Turning data into robust learning models for dynamic and multimodal settings.</p>
+            </a>
+            <a class="research-card" href="https://scholar.google.com/citations?view_op=search_authors&hl=zh-TW&mauthors=label:data_economy">
+              <strong>Data Economy</strong>
+              <p>Studying data value, incentives, and markets for data-driven decisions.</p>
+            </a>
+          </div>
+        </div>
+
+        <figure class="profile">
+          <img src="assets/profile-campus.png" alt="Portrait of Canran Xiao">
+          <figcaption>Canran Xiao</figcaption>
+        </figure>
+      </section>
+
+      <section class="section" id="about">
+        <h2>About Me</h2>
+        <p>
+          Hello! I am Canran Xiao, a postdoctoral fellow at Sun Yat-sen
+          University. My postdoctoral mentor is Prof.
+          <a href="https://scst.sysu.edu.cn/teacher/ShenLi">Li Shen</a>. I
+          received my Ph.D. from Central South University, advised by Prof.
+          <a href="https://www.cae.cn/cae/html/main/colys/76216903.html">Xiaohong Chen</a>
+          and Prof. <a href="https://bs.csu.edu.cn/info/1780/23635.htm">Yongmei Liu</a>.
+        </p>
+        <p>
+          My research focuses on data management, data intelligence, and data
+          economy. I study how data can be organized, governed, valued, and
+          transformed into trustworthy data-driven intelligence, decisions, and
+          value, with an emphasis on connecting robust data infrastructure,
+          data-driven intelligence, and market-oriented data value creation. I
+          have published over twenty
+          papers in leading venues and journals including NeurIPS, AAAI, ICLR,
+          WWW, CVPR, ACM MM, IEEE Transactions, and Neural Networks.
+        </p>
+        <p class="note">
+          I am always interested in collaborations that connect data
+          management, data intelligence, and data economy, especially around
+          data quality, data value, and trustworthy data-driven learning.
+        </p>
+      </section>
+
+      <section class="section" id="news">
+        <h2>News</h2>
+        <ul class="news-list">
+          <li>
+            <span class="date">2026.06.18</span>
+            <span>
+              One paper was accepted by ECCV.<span class="news-icon">🎉📄✨</span>
+            </span>
+          </li>
+          <li>
+            <span class="date">2026.05.01</span>
+            <span>
+              Two papers were accepted by ICML.<span class="news-icon">🎉📄✨</span>
+            </span>
+          </li>
+        </ul>
+      </section>
+
+      <section class="section" id="publications">
+        <h2>Selected Publications</h2>
+        <p class="section-lead">
+          Selected papers from my <a href="https://scholar.google.com/citations?hl=zh-TW&amp;user=TQIKwMIAAAAJ&amp;view_op=list_works&amp;sortby=pubdate">Google Scholar</a>. <span class="corresponding">*</span> denotes corresponding author.
+        </p>
+        <ol class="publication-list">
+          <li class="publication">
+            <span class="venue">Neural Networks</span>
+            <div>
+              <p class="paper-title">
+                <a href="https://scholar.google.com.hk/citations?view_op=view_citation&amp;hl=zh-TW&amp;user=TQIKwMIAAAAJ&amp;citation_for_view=TQIKwMIAAAAJ:iH-uZ7U-co4C">Curiosity-Driven cooperation for long-tailed multi-label learning</a>
+              </p>
+              <p class="authors"><span class="me">C Xiao</span>, C Zhao, Z Ke, F Shen, L Shen</p>
+              <p class="booktitle">Neural Networks, 109075, 2026</p>
+              <p class="paper-highlight">Highlight: makes imbalanced label data more useful by encouraging models to explore underrepresented data patterns.</p>
+            </div>
+          </li>
+
+          <li class="publication">
+            <span class="venue">WWW 2026</span>
+            <div>
+              <p class="paper-title">
+                <a href="https://scholar.google.com/citations?view_op=view_citation&amp;hl=zh-TW&amp;user=TQIKwMIAAAAJ&amp;pagesize=100&amp;sortby=pubdate&amp;citation_for_view=TQIKwMIAAAAJ:hFOr9nPyWt4C">Prototype-Aligned Federated Soft-Prompts for Continual Web Personalization</a>
+              </p>
+              <p class="authors"><span class="me">C Xiao</span>, L Hou</p>
+              <p class="booktitle">The Web Conference (WWW 2026), 2026</p>
+              <p class="paper-highlight">Highlight: handles continuously arriving user data while keeping personalized web models adaptive across clients.</p>
+            </div>
+          </li>
+
+          <li class="publication">
+            <span class="venue">ICLR 2026</span>
+            <div>
+              <p class="paper-title">
+                <a href="https://scholar.google.com/citations?view_op=view_citation&amp;hl=zh-TW&amp;user=TQIKwMIAAAAJ&amp;pagesize=100&amp;sortby=pubdate&amp;citation_for_view=TQIKwMIAAAAJ:HDshCWvjkbEC">Reversible Primitive-Composition Alignment for Continual Vision-Language Learning</a>
+              </p>
+              <p class="authors"><span class="me">C Xiao</span>, T Xu, S Ma, Y Jiang, H Gao, Y Wu</p>
+              <p class="booktitle">The Fourteenth International Conference on Learning Representations (ICLR 2026), 2026</p>
+              <p class="paper-highlight">Highlight: supports data that arrives over time by aligning primitive and compositional knowledge in vision-language streams.</p>
+            </div>
+          </li>
+
+          <li class="publication">
+            <span class="venue">ICLR 2026</span>
+            <div>
+              <p class="paper-title">
+                <a href="https://scholar.google.com.hk/citations?view_op=view_citation&amp;hl=zh-TW&amp;user=TQIKwMIAAAAJ&amp;cstart=20&amp;pagesize=80&amp;citation_for_view=TQIKwMIAAAAJ:7PzlFSSx8tAC">Path Matters: Unveiling Geometric Implicit Bias via Curvature-Aware Sparse View Optimization</a>
+              </p>
+              <p class="authors"><span class="me">C Xiao</span>, L Fan, Y Li, J Tang, P Yu</p>
+              <p class="booktitle">The Fourteenth International Conference on Learning Representations (ICLR 2026), 2026</p>
+              <p class="paper-highlight">Highlight: improves sparse-view data utility by choosing camera paths that better cover high-curvature geometric information.</p>
+            </div>
+          </li>
+
+          <li class="publication">
+            <span class="venue">CVPR 2026</span>
+            <div>
+              <p class="paper-title">
+                <a href="https://scholar.google.com.hk/citations?view_op=view_citation&amp;hl=zh-TW&amp;user=TQIKwMIAAAAJ&amp;citation_for_view=TQIKwMIAAAAJ:qxL8FJ1GzNcC">Affordance-First Decomposition for Continual Learning in Video-Language Understanding</a>
+              </p>
+              <p class="authors">M Xu, H Liu, N Peng, Q Chen, <span class="me">C Xiao</span><span class="corresponding">*</span></p>
+              <p class="booktitle">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition, 2026</p>
+              <p class="paper-highlight">Highlight: decomposes incoming video-language data so models can absorb new visual evidence without forgetting old data.</p>
+            </div>
+          </li>
+
+          <li class="publication">
+            <span class="venue">AAAI 2026</span>
+            <div>
+              <p class="paper-title">
+                <a href="https://scholar.google.com/citations?view_op=view_citation&amp;hl=zh-TW&amp;user=TQIKwMIAAAAJ&amp;pagesize=100&amp;sortby=pubdate&amp;citation_for_view=TQIKwMIAAAAJ:Zph67rFs4hoC">From Points to Coalitions: Hierarchical Contrastive Shapley Values for Prioritizing Data Samples</a>
+              </p>
+              <p class="authors"><span class="me">C Xiao</span>, J Dou, Z Lin, Z Ke, L Hou</p>
+              <p class="booktitle">The 40th Annual AAAI Conference on Artificial Intelligence (AAAI 2026), 2025</p>
+              <p class="paper-highlight">Highlight: estimates which data samples contribute the most value, helping prioritize data before training.</p>
+            </div>
+          </li>
+
+          <li class="publication">
+            <span class="venue">J. Forecasting</span>
+            <div>
+              <p class="paper-title">
+                <a href="https://scholar.google.com.hk/citations?view_op=view_citation&amp;hl=zh-TW&amp;user=TQIKwMIAAAAJ&amp;citation_for_view=TQIKwMIAAAAJ:d1gkVwhDpl0C">A multifrequency data fusion deep learning model for carbon price prediction</a>
+              </p>
+              <p class="authors"><span class="me">C Xiao</span>, Y Liu</p>
+              <p class="booktitle">Journal of Forecasting 44(2), 436-458, 2025</p>
+              <p class="paper-highlight">Highlight: fuses carbon-market data from multiple frequencies to produce more reliable price forecasting signals.</p>
+            </div>
+          </li>
+
+          <li class="publication">
+            <span class="venue">NeurIPS 2024</span>
+            <div>
+              <p class="paper-title">
+                <a href="https://scholar.google.com/citations?view_op=view_citation&amp;hl=zh-TW&amp;user=TQIKwMIAAAAJ&amp;pagesize=100&amp;sortby=pubdate&amp;citation_for_view=TQIKwMIAAAAJ:IWHjjKOFINEC">Confusion-resistant federated learning via diffusion-based data harmonization on non-iid data</a>
+              </p>
+              <p class="authors">X Chen, <span class="me">C Xiao</span><span class="corresponding">*</span>, Y Liu</p>
+              <p class="booktitle">Advances in Neural Information Processing Systems (NeurIPS 2024) 37, 137495-137539, 2024</p>
+              <p class="paper-highlight">Highlight: harmonizes heterogeneous client data distributions so federated learning can work better on non-IID data.</p>
+            </div>
+          </li>
+
+          <li class="publication">
+            <span class="venue">NeurIPS 2024</span>
+            <div>
+              <p class="paper-title">
+                <a href="https://scholar.google.com.hk/citations?view_op=view_citation&amp;hl=zh-TW&amp;user=TQIKwMIAAAAJ&amp;citation_for_view=TQIKwMIAAAAJ:u-x6o8ySG0sC">Swift sampler: Efficient learning of sampler by 10 parameters</a>
+              </p>
+              <p class="authors">J Yao, C Li, <span class="me">C Xiao</span><span class="corresponding">*</span></p>
+              <p class="booktitle">Advances in Neural Information Processing Systems (NeurIPS 2024) 37, 59030-59053, 2024</p>
+              <p class="paper-highlight">Highlight: learns how to sample informative data efficiently, reducing the cost of deciding which data to use.</p>
+            </div>
+          </li>
+        </ol>
+      </section>
+
+      <section class="section" id="service">
+        <h2>Academic Service</h2>
+        <div class="service-panel">
+          <ul class="service-list">
+            <li>Conference reviewer: CVPR 2026, ICLR 2026, AAAI 2026, NeurIPS 2025, ICCV 2025, ICML 2025, ICLR 2025.</li>
+            <li>Journal reviewer: IEEE ToN, IEEE TDSC, Information Fusion.</li>
+          </ul>
+        </div>
+      </section>
+
+      <footer class="footer">
+        © 2026 Canran Xiao. Powered by GitHub Pages. Last updated: June 25, 2026.
+      </footer>
+    </main>
+  </body>
+</html>
