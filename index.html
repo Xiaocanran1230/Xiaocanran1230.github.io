@@ -42,48 +42,58 @@
         line-height: 1.68;
       }
 
-      .cursor-ghost {
+      .cursor-shadow {
         position: fixed;
         top: 0;
         left: 0;
         z-index: 9999;
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        background:
-          radial-gradient(circle, rgba(126, 205, 255, 0.34) 0%, rgba(126, 205, 255, 0.16) 44%, rgba(126, 205, 255, 0) 72%);
-        filter: blur(0.2px);
+        width: 17px;
+        height: 23px;
+        background: rgba(82, 177, 240, 0.42);
+        clip-path: polygon(0 0, 0 22px, 6px 16px, 10px 23px, 13px 21px, 9px 14px, 17px 14px);
+        filter: drop-shadow(0 0 6px rgba(82, 177, 240, 0.28));
         mix-blend-mode: multiply;
         opacity: 0;
         pointer-events: none;
-        transform: translate3d(-999px, -999px, 0) translate(-50%, -50%);
+        transform: translate3d(-999px, -999px, 0);
         transition: opacity 180ms ease;
         will-change: transform, opacity;
       }
 
-      .cursor-ghost::before {
-        position: absolute;
-        inset: 9px;
-        border: 1px solid rgba(91, 174, 232, 0.24);
-        border-radius: 50%;
-        content: "";
+      .cursor-shadow:nth-child(1) {
+        opacity: 0.5;
       }
 
-      .cursor-ghost::after {
-        position: absolute;
-        inset: 18px;
-        border-radius: 50%;
-        background: rgba(86, 181, 242, 0.46);
-        box-shadow: 0 0 18px rgba(86, 181, 242, 0.36);
-        content: "";
+      .cursor-shadow:nth-child(2) {
+        opacity: 0.42;
       }
 
-      .cursor-ghost.is-active {
-        opacity: 0.95;
+      .cursor-shadow:nth-child(3) {
+        opacity: 0.34;
+      }
+
+      .cursor-shadow:nth-child(4) {
+        opacity: 0.27;
+      }
+
+      .cursor-shadow:nth-child(5) {
+        opacity: 0.2;
+      }
+
+      .cursor-shadow:nth-child(6) {
+        opacity: 0.14;
+      }
+
+      .cursor-shadow:nth-child(7) {
+        opacity: 0.09;
+      }
+
+      .cursor-trail:not(.is-active) .cursor-shadow {
+        opacity: 0;
       }
 
       @media (pointer: coarse), (prefers-reduced-motion: reduce) {
-        .cursor-ghost {
+        .cursor-trail {
           display: none;
         }
       }
@@ -894,23 +904,44 @@
           return;
         }
 
-        const ghost = document.createElement("div");
-        ghost.className = "cursor-ghost";
-        ghost.setAttribute("aria-hidden", "true");
-        document.body.appendChild(ghost);
+        const trail = document.createElement("div");
+        trail.className = "cursor-trail";
+        trail.setAttribute("aria-hidden", "true");
+        document.body.appendChild(trail);
+
+        const shadows = Array.from({ length: 7 }, (_, index) => {
+          const shadow = document.createElement("div");
+          shadow.className = "cursor-shadow";
+          shadow.style.transform = "translate3d(-999px, -999px, 0)";
+          trail.appendChild(shadow);
+          return {
+            node: shadow,
+            x: window.innerWidth / 2,
+            y: window.innerHeight / 2,
+            scale: 1 - index * 0.045,
+            ease: 0.34 - index * 0.032,
+          };
+        });
 
         let targetX = window.innerWidth / 2;
         let targetY = window.innerHeight / 2;
-        let x = targetX;
-        let y = targetY;
         let active = false;
         let frameId = 0;
         let initialized = false;
 
         const render = () => {
-          x += (targetX - x) * 0.16;
-          y += (targetY - y) * 0.16;
-          ghost.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%)`;
+          let leadX = targetX;
+          let leadY = targetY;
+
+          shadows.forEach((shadow, index) => {
+            shadow.x += (leadX - shadow.x) * shadow.ease;
+            shadow.y += (leadY - shadow.y) * shadow.ease;
+            shadow.node.style.transform = `translate3d(${shadow.x}px, ${shadow.y}px, 0) scale(${shadow.scale})`;
+            shadow.node.style.zIndex = String(9999 - index);
+            leadX = shadow.x;
+            leadY = shadow.y;
+          });
+
           frameId = active ? window.requestAnimationFrame(render) : 0;
         };
 
@@ -920,7 +951,7 @@
           }
 
           active = true;
-          ghost.classList.add("is-active");
+          trail.classList.add("is-active");
           if (!frameId) {
             frameId = window.requestAnimationFrame(render);
           }
@@ -930,8 +961,10 @@
           targetX = event.clientX;
           targetY = event.clientY;
           if (!initialized) {
-            x = targetX;
-            y = targetY;
+            shadows.forEach((shadow) => {
+              shadow.x = targetX;
+              shadow.y = targetY;
+            });
             initialized = true;
           }
           activate();
@@ -939,7 +972,7 @@
 
         window.addEventListener("pointerleave", () => {
           active = false;
-          ghost.classList.remove("is-active");
+          trail.classList.remove("is-active");
         });
       })();
     </script>
