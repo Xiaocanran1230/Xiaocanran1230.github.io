@@ -379,6 +379,39 @@
         white-space: nowrap;
       }
 
+      .news-list.is-collapsed li:nth-child(n+5) {
+        display: none;
+      }
+
+      .news-toggle {
+        display: inline-flex;
+        align-items: center;
+        min-height: 34px;
+        margin: 14px 0 0 20px;
+        padding: 7px 13px;
+        border: 1px solid #bddbf1;
+        border-radius: 999px;
+        background: linear-gradient(135deg, #edf8ff, #fff6fb);
+        color: #246fa7;
+        cursor: pointer;
+        font: inherit;
+        font-size: 13px;
+        font-weight: 700;
+        box-shadow: 0 6px 16px rgba(82, 148, 202, 0.08);
+        transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+      }
+
+      .news-toggle:hover,
+      .news-toggle:focus {
+        border-color: #a8cfe8;
+        box-shadow: 0 10px 22px rgba(82, 148, 202, 0.12);
+        transform: translateY(-1px);
+      }
+
+      .news-toggle[hidden] {
+        display: none;
+      }
+
       .publication-list {
         display: grid;
         gap: 16px;
@@ -734,7 +767,7 @@
 
       <section class="section" id="news">
         <h2>News</h2>
-        <ul class="news-list">
+        <ul class="news-list is-collapsed" id="news-list">
           <li>
             <span class="date">2026.06.18</span>
             <span>
@@ -760,6 +793,9 @@
             </span>
           </li>
         </ul>
+        <button class="news-toggle" type="button" aria-controls="news-list" aria-expanded="false" hidden>
+          Show more news
+        </button>
       </section>
 
       <section class="section" id="publications">
@@ -886,7 +922,7 @@
         <div class="service-panel">
           <ul class="service-list">
             <li>Conference reviewer: CVPR 2026, ICLR 2026, AAAI 2026, NeurIPS 2025, ICCV 2025, ICML 2025, ICLR 2025.</li>
-            <li>Journal reviewer: IEEE TKDE, IEEE ToN, IEEE TDSC, Information Fusion.</li>
+            <li>Journal reviewer: IEEE TKDE, IEEE ToN, IEEE TDSC, TMLR, Information Fusion.</li>
           </ul>
         </div>
       </section>
@@ -896,6 +932,24 @@
       </footer>
     </main>
     <script>
+      (() => {
+        const newsList = document.querySelector("#news-list");
+        const newsToggle = document.querySelector(".news-toggle");
+        const visibleCount = 4;
+
+        if (!newsList || !newsToggle || newsList.children.length <= visibleCount) {
+          return;
+        }
+
+        newsToggle.hidden = false;
+        newsToggle.addEventListener("click", () => {
+          const expanded = newsToggle.getAttribute("aria-expanded") === "true";
+          newsList.classList.toggle("is-collapsed", expanded);
+          newsToggle.setAttribute("aria-expanded", String(!expanded));
+          newsToggle.textContent = expanded ? "Show more news" : "Show fewer news";
+        });
+      })();
+
       (() => {
         const finePointer = window.matchMedia("(pointer: fine)").matches;
         const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
