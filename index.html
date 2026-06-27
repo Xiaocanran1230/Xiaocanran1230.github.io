@@ -42,6 +42,52 @@
         line-height: 1.68;
       }
 
+      .cursor-ghost {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 9999;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background:
+          radial-gradient(circle, rgba(126, 205, 255, 0.34) 0%, rgba(126, 205, 255, 0.16) 44%, rgba(126, 205, 255, 0) 72%);
+        filter: blur(0.2px);
+        mix-blend-mode: multiply;
+        opacity: 0;
+        pointer-events: none;
+        transform: translate3d(-999px, -999px, 0) translate(-50%, -50%);
+        transition: opacity 180ms ease;
+        will-change: transform, opacity;
+      }
+
+      .cursor-ghost::before {
+        position: absolute;
+        inset: 9px;
+        border: 1px solid rgba(91, 174, 232, 0.24);
+        border-radius: 50%;
+        content: "";
+      }
+
+      .cursor-ghost::after {
+        position: absolute;
+        inset: 18px;
+        border-radius: 50%;
+        background: rgba(86, 181, 242, 0.46);
+        box-shadow: 0 0 18px rgba(86, 181, 242, 0.36);
+        content: "";
+      }
+
+      .cursor-ghost.is-active {
+        opacity: 0.95;
+      }
+
+      @media (pointer: coarse), (prefers-reduced-motion: reduce) {
+        .cursor-ghost {
+          display: none;
+        }
+      }
+
       a {
         color: var(--link);
         text-decoration: none;
@@ -839,5 +885,63 @@
         © 2026 Canran Xiao. Powered by GitHub Pages. Last updated: June 25, 2026.
       </footer>
     </main>
+    <script>
+      (() => {
+        const finePointer = window.matchMedia("(pointer: fine)").matches;
+        const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        if (!finePointer || reducedMotion) {
+          return;
+        }
+
+        const ghost = document.createElement("div");
+        ghost.className = "cursor-ghost";
+        ghost.setAttribute("aria-hidden", "true");
+        document.body.appendChild(ghost);
+
+        let targetX = window.innerWidth / 2;
+        let targetY = window.innerHeight / 2;
+        let x = targetX;
+        let y = targetY;
+        let active = false;
+        let frameId = 0;
+        let initialized = false;
+
+        const render = () => {
+          x += (targetX - x) * 0.16;
+          y += (targetY - y) * 0.16;
+          ghost.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%)`;
+          frameId = active ? window.requestAnimationFrame(render) : 0;
+        };
+
+        const activate = () => {
+          if (active) {
+            return;
+          }
+
+          active = true;
+          ghost.classList.add("is-active");
+          if (!frameId) {
+            frameId = window.requestAnimationFrame(render);
+          }
+        };
+
+        window.addEventListener("pointermove", (event) => {
+          targetX = event.clientX;
+          targetY = event.clientY;
+          if (!initialized) {
+            x = targetX;
+            y = targetY;
+            initialized = true;
+          }
+          activate();
+        }, { passive: true });
+
+        window.addEventListener("pointerleave", () => {
+          active = false;
+          ghost.classList.remove("is-active");
+        });
+      })();
+    </script>
   </body>
 </html>
