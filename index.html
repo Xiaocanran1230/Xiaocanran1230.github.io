@@ -265,7 +265,22 @@
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 10px;
+        margin-top: 10px;
+      }
+
+      .research-focus {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
         margin-top: 18px;
+        padding: 7px 12px;
+        border: 1px solid #c4def1;
+        border-radius: 999px;
+        background: linear-gradient(135deg, rgba(240, 249, 255, 0.88), rgba(255, 246, 251, 0.88));
+        color: #236fa9;
+        font-size: 13px;
+        font-weight: 750;
+        box-shadow: 0 8px 18px rgba(82, 148, 202, 0.08);
       }
 
       .research-card {
@@ -743,18 +758,19 @@
             </div>
           </div>
 
-          <div class="research-bento" aria-label="Research interests">
-            <a class="research-card" href="https://scholar.google.com/citations?view_op=search_authors&hl=zh-TW&mauthors=label:data_management">
-              <strong>Data Management</strong>
-              <p>Organizing, assessing, and selecting high-quality data for reliable systems.</p>
+          <div class="research-focus">Main Research Direction: Data Intelligence</div>
+          <div class="research-bento" aria-label="Data intelligence research interests">
+            <a class="research-card" href="https://scholar.google.com/citations?view_op=search_authors&hl=zh-TW&mauthors=label:multimodal_learning">
+              <strong>Multimodal &amp; Continual Learning</strong>
+              <p>Learning from multimodal and continuously arriving data for adaptive foundation models.</p>
             </a>
-            <a class="research-card" href="https://scholar.google.com/citations?view_op=search_authors&hl=zh-TW&mauthors=label:data_intelligence">
-              <strong>Data Intelligence</strong>
-              <p>Turning data into robust learning models for dynamic and multimodal settings.</p>
+            <a class="research-card" href="https://scholar.google.com/citations?view_op=search_authors&hl=zh-TW&mauthors=label:federated_learning">
+              <strong>Federated &amp; Trustworthy Learning</strong>
+              <p>Building reliable models under distributed, non-IID, private, and deletable data settings.</p>
             </a>
-            <a class="research-card" href="https://scholar.google.com/citations?view_op=search_authors&hl=zh-TW&mauthors=label:data_economy">
-              <strong>Data Economy</strong>
-              <p>Studying data value, incentives, and markets for data-driven decisions.</p>
+            <a class="research-card" href="https://scholar.google.com/citations?view_op=search_authors&hl=zh-TW&mauthors=label:data_valuation">
+              <strong>Data Valuation &amp; Decision Intelligence</strong>
+              <p>Measuring, selecting, and governing data to support intelligent decisions and data value creation.</p>
             </a>
           </div>
         </div>
@@ -776,19 +792,19 @@
           and Prof. <a href="https://bs.csu.edu.cn/info/1780/23635.htm">Yongmei Liu</a>.
         </p>
         <p>
-          My research focuses on data management, data intelligence, and data
-          economy. I study how data can be organized, governed, valued, and
-          transformed into trustworthy data-driven intelligence, decisions, and
-          value, with an emphasis on connecting robust data infrastructure,
-          data-driven intelligence, and market-oriented data value creation. I
-          have published over twenty
+          My research is centered on data intelligence. I study how data can
+          be learned from, valued, governed, and transformed into trustworthy
+          intelligent systems, with an emphasis on multimodal and continual
+          learning, federated and trustworthy learning, and data valuation for
+          data-driven decision making. I have published over twenty
           papers in leading venues and journals including NeurIPS, AAAI, ICLR,
           ICML, WWW, CVPR, ACM MM, IEEE Transactions, and Neural Networks.
         </p>
         <p class="note">
-          I am always interested in collaborations on data problems for
-          foundation models, broadly spanning data quality, selection,
-          valuation, governance, and trustworthy data-driven learning.
+          I am always interested in collaborations on data intelligence,
+          especially data problems for foundation models, dynamic and
+          multimodal data, federated and unlearning settings, data valuation,
+          and data-driven decision making.
         </p>
       </section>
 
