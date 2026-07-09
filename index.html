@@ -265,22 +265,7 @@
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 10px;
-        margin-top: 10px;
-      }
-
-      .research-focus {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
         margin-top: 18px;
-        padding: 7px 12px;
-        border: 1px solid #c4def1;
-        border-radius: 999px;
-        background: linear-gradient(135deg, rgba(240, 249, 255, 0.88), rgba(255, 246, 251, 0.88));
-        color: #236fa9;
-        font-size: 13px;
-        font-weight: 750;
-        box-shadow: 0 8px 18px rgba(82, 148, 202, 0.08);
       }
 
       .research-card {
@@ -303,9 +288,31 @@
         transform: translateY(-2px);
       }
 
+      .research-heading {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        margin-bottom: 7px;
+      }
+
+      .research-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 30px;
+        width: 30px;
+        height: 30px;
+        border: 1px solid rgba(163, 211, 240, 0.9);
+        border-radius: 50%;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(235, 248, 255, 0.72));
+        color: #2878b7;
+        font-size: 15px;
+        font-weight: 850;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 6px 14px rgba(82, 148, 202, 0.1);
+      }
+
       .research-card strong {
         display: block;
-        margin-bottom: 7px;
         color: #173d63;
         font-size: 14px;
         line-height: 1.25;
@@ -758,21 +765,6 @@
             </div>
           </div>
 
-          <div class="research-focus">Main Research Direction: Data Intelligence</div>
-          <div class="research-bento" aria-label="Data intelligence research interests">
-            <a class="research-card" href="https://scholar.google.com/citations?view_op=search_authors&hl=zh-TW&mauthors=label:continual_learning">
-              <strong>Dynamic Data Learning</strong>
-              <p>Learning from continuously evolving data for adaptive, continual, and personalized intelligent systems.</p>
-            </a>
-            <a class="research-card" href="https://scholar.google.com/citations?view_op=search_authors&hl=zh-TW&mauthors=label:heterogeneous_data">
-              <strong>Heterogeneous Data Learning</strong>
-              <p>Building robust intelligence over multimodal, cross-domain, federated, and non-IID data.</p>
-            </a>
-            <a class="research-card" href="https://scholar.google.com/citations?view_op=search_authors&hl=zh-TW&mauthors=label:data_valuation">
-              <strong>Data Attribution and Valuation</strong>
-              <p>Quantifying data contributions to guide data selection, governance, and value-driven decision making.</p>
-            </a>
-          </div>
         </div>
 
         <figure class="profile">
@@ -797,16 +789,39 @@
           trustworthy intelligent systems. My work focuses on dynamic data
           learning, heterogeneous data learning, and data attribution and
           valuation, spanning continual and personalized learning, multimodal
-          and federated settings, and value-driven data selection and
-          decision making. I have published over twenty
+          and federated settings, and value-driven data selection,
+          augmentation, and synthesis. I have published over twenty
           papers in leading venues and journals including NeurIPS, AAAI, ICLR,
           ICML, WWW, CVPR, ACM MM, IEEE Transactions, and Neural Networks.
         </p>
+        <div class="research-bento" aria-label="Data intelligence research interests">
+          <a class="research-card" href="https://scholar.google.com/citations?view_op=search_authors&hl=zh-TW&mauthors=label:continual_learning">
+            <span class="research-heading">
+              <span class="research-icon" aria-hidden="true">↻</span>
+              <strong>Dynamic Data Learning</strong>
+            </span>
+            <p>Learning from continuously evolving data for adaptive, continual, and personalized intelligent systems.</p>
+          </a>
+          <a class="research-card" href="https://scholar.google.com/citations?view_op=search_authors&hl=zh-TW&mauthors=label:heterogeneous_data">
+            <span class="research-heading">
+              <span class="research-icon" aria-hidden="true">⧉</span>
+              <strong>Heterogeneous Data Learning</strong>
+            </span>
+            <p>Building robust intelligence over multimodal, cross-domain, federated, and non-IID data.</p>
+          </a>
+          <a class="research-card" href="https://scholar.google.com/citations?view_op=search_authors&hl=zh-TW&mauthors=label:data_valuation">
+            <span class="research-heading">
+              <span class="research-icon" aria-hidden="true">∑</span>
+              <strong>Data Attribution and Valuation</strong>
+            </span>
+            <p>Quantifying data contributions to guide data selection, augmentation, synthesis, governance, and value creation.</p>
+          </a>
+        </div>
         <p class="note">
           I am always interested in collaborations on data intelligence,
           especially data problems for foundation models, evolving and
           heterogeneous data, federated and unlearning settings, data
-          attribution, data valuation, and data-driven decision making.
+          attribution, data valuation, data augmentation, and data synthesis.
         </p>
       </section>
 
