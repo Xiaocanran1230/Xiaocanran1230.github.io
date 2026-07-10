@@ -494,7 +494,7 @@
 
       .publication {
         display: grid;
-        grid-template-columns: 104px minmax(0, 1fr);
+        grid-template-columns: 158px minmax(0, 1fr);
         gap: 18px;
         padding: 16px;
         border: 1px solid var(--line);
@@ -508,6 +508,31 @@
         border-color: #b9d8ef;
         box-shadow: 0 14px 30px rgba(82, 148, 202, 0.12), 0 8px 24px var(--pink-glow);
         transform: translateY(-1px);
+      }
+
+      .pub-preview {
+        display: grid;
+        align-content: start;
+        gap: 9px;
+        justify-items: center;
+      }
+
+      .pub-figure {
+        display: block;
+        width: 100%;
+        aspect-ratio: 4 / 3;
+        object-fit: cover;
+        border: 1px solid rgba(197, 221, 239, 0.92);
+        border-radius: 8px;
+        background: #fff;
+        box-shadow: 0 10px 22px rgba(82, 148, 202, 0.14), 0 8px 20px rgba(232, 150, 190, 0.1);
+        transition: box-shadow 160ms ease, transform 160ms ease;
+      }
+
+      .publication:hover .pub-figure,
+      .publication:focus-within .pub-figure {
+        box-shadow: 0 16px 28px rgba(82, 148, 202, 0.2), 0 10px 24px rgba(232, 150, 190, 0.16);
+        transform: translateY(-2px) scale(1.01);
       }
 
       .publication:hover .paper-highlight,
@@ -548,6 +573,23 @@
         width: 4px;
         background: linear-gradient(180deg, var(--accent), var(--accent-2));
         content: "";
+      }
+
+      .pub-preview .venue {
+        width: 100%;
+        min-height: 30px;
+        padding: 7px 10px;
+        border: 0;
+        border-radius: 7px;
+        background: linear-gradient(135deg, #d516c4 0%, #a313bd 58%, #7247d9 100%);
+        color: #fff;
+        font-size: 12px;
+        letter-spacing: 0.01em;
+        box-shadow: 0 10px 22px rgba(169, 33, 182, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.26);
+      }
+
+      .pub-preview .venue::before {
+        display: none;
       }
 
       .publication p {
@@ -735,6 +777,15 @@
           width: fit-content;
           min-width: 0;
         }
+
+        .pub-preview {
+          max-width: 190px;
+        }
+
+        .pub-preview .venue {
+          justify-content: center;
+          width: 100%;
+        }
       }
     </style>
   </head>
@@ -893,7 +944,10 @@
         </p>
         <ol class="publication-list">
           <li class="publication">
-            <span class="venue">Neural Networks</span>
+            <div class="pub-preview">
+              <span class="venue">Neural Networks</span>
+              <img class="pub-figure" src="assets/publications/neural-curiosity.png" alt="Figure preview for Curiosity-Driven cooperation for long-tailed multi-label learning" loading="lazy">
+            </div>
             <div>
               <p class="paper-title">
                 <a href="https://scholar.google.com.hk/citations?view_op=view_citation&amp;hl=zh-TW&amp;user=TQIKwMIAAAAJ&amp;citation_for_view=TQIKwMIAAAAJ:iH-uZ7U-co4C">Curiosity-Driven cooperation for long-tailed multi-label learning</a>
@@ -906,7 +960,10 @@
           </li>
 
           <li class="publication">
-            <span class="venue">ICML 2026</span>
+            <div class="pub-preview">
+              <span class="venue">ICML 2026</span>
+              <img class="pub-figure" src="assets/publications/icml-unlearn.png" alt="Figure preview for Influence-Disentangled Federated Training" loading="lazy">
+            </div>
             <div>
               <p class="paper-title">
                 <a href="https://icml.cc/virtual/2026/poster/65319">Influence-Disentangled Federated Training: Learning Models That Are Easy to Unlearn</a>
@@ -920,7 +977,10 @@
           </li>
 
           <li class="publication">
-            <span class="venue">ECCV 2026</span>
+            <div class="pub-preview">
+              <span class="venue">ECCV 2026</span>
+              <img class="pub-figure" src="assets/publications/eccv-routing.png" alt="Figure preview for Interference-Aware Continual Vision-Language Learning" loading="lazy">
+            </div>
             <div>
               <p class="paper-title">
                 <a href="https://scholar.google.com/scholar?q=%22Interference-Aware+Continual+Vision-Language+Learning+via+Instance-Level+Expert+Routing%22">Interference-Aware Continual Vision-Language Learning via Instance-Level Expert Routing</a>
@@ -933,7 +993,10 @@
           </li>
 
           <li class="publication">
-            <span class="venue">WWW 2026</span>
+            <div class="pub-preview">
+              <span class="venue">WWW 2026</span>
+              <img class="pub-figure" src="assets/publications/www-protofed.png" alt="Pipeline figure for Prototype-Aligned Federated Soft-Prompts" loading="lazy">
+            </div>
             <div>
               <p class="paper-title">
                 <a href="https://scholar.google.com/citations?view_op=view_citation&amp;hl=zh-TW&amp;user=TQIKwMIAAAAJ&amp;pagesize=100&amp;sortby=pubdate&amp;citation_for_view=TQIKwMIAAAAJ:hFOr9nPyWt4C">Prototype-Aligned Federated Soft-Prompts for Continual Web Personalization</a>
@@ -947,7 +1010,10 @@
           </li>
 
           <li class="publication">
-            <span class="venue">ICLR 2026</span>
+            <div class="pub-preview">
+              <span class="venue">ICLR 2026</span>
+              <img class="pub-figure" src="assets/publications/iclr-reversible.png" alt="Figure preview for Reversible Primitive-Composition Alignment" loading="lazy">
+            </div>
             <div>
               <p class="paper-title">
                 <a href="https://scholar.google.com/citations?view_op=view_citation&amp;hl=zh-TW&amp;user=TQIKwMIAAAAJ&amp;pagesize=100&amp;sortby=pubdate&amp;citation_for_view=TQIKwMIAAAAJ:HDshCWvjkbEC">Reversible Primitive-Composition Alignment for Continual Vision-Language Learning</a>
@@ -961,7 +1027,10 @@
           </li>
 
           <li class="publication">
-            <span class="venue">ICLR 2026</span>
+            <div class="pub-preview">
+              <span class="venue">ICLR 2026</span>
+              <img class="pub-figure" src="assets/publications/iclr-path.png" alt="Figure preview for Path Matters" loading="lazy">
+            </div>
             <div>
               <p class="paper-title">
                 <a href="https://scholar.google.com.hk/citations?view_op=view_citation&amp;hl=zh-TW&amp;user=TQIKwMIAAAAJ&amp;cstart=20&amp;pagesize=80&amp;citation_for_view=TQIKwMIAAAAJ:7PzlFSSx8tAC">Path Matters: Unveiling Geometric Implicit Bias via Curvature-Aware Sparse View Optimization</a>
@@ -975,7 +1044,10 @@
           </li>
 
           <li class="publication">
-            <span class="venue">CVPR 2026</span>
+            <div class="pub-preview">
+              <span class="venue">CVPR 2026</span>
+              <img class="pub-figure" src="assets/publications/cvpr-affordance.png" alt="Pipeline figure for Affordance-First Decomposition" loading="lazy">
+            </div>
             <div>
               <p class="paper-title">
                 <a href="https://scholar.google.com.hk/citations?view_op=view_citation&amp;hl=zh-TW&amp;user=TQIKwMIAAAAJ&amp;citation_for_view=TQIKwMIAAAAJ:qxL8FJ1GzNcC">Affordance-First Decomposition for Continual Learning in Video-Language Understanding</a>
@@ -989,7 +1061,10 @@
           </li>
 
           <li class="publication">
-            <span class="venue">AAAI 2026</span>
+            <div class="pub-preview">
+              <span class="venue">AAAI 2026</span>
+              <img class="pub-figure" src="assets/publications/aaai-shapley.png" alt="Experimental figure for Hierarchical Contrastive Shapley Values" loading="lazy">
+            </div>
             <div>
               <p class="paper-title">
                 <a href="https://scholar.google.com/citations?view_op=view_citation&amp;hl=zh-TW&amp;user=TQIKwMIAAAAJ&amp;pagesize=100&amp;sortby=pubdate&amp;citation_for_view=TQIKwMIAAAAJ:Zph67rFs4hoC">From Points to Coalitions: Hierarchical Contrastive Shapley Values for Prioritizing Data Samples</a>
@@ -1003,7 +1078,10 @@
           </li>
 
           <li class="publication">
-            <span class="venue">NeurIPS 2024</span>
+            <div class="pub-preview">
+              <span class="venue">NeurIPS 2024</span>
+              <img class="pub-figure" src="assets/publications/neurips-confusion.png" alt="Pipeline figure for Confusion-resistant federated learning" loading="lazy">
+            </div>
             <div>
               <p class="paper-title">
                 <a href="https://scholar.google.com/citations?view_op=view_citation&amp;hl=zh-TW&amp;user=TQIKwMIAAAAJ&amp;pagesize=100&amp;sortby=pubdate&amp;citation_for_view=TQIKwMIAAAAJ:IWHjjKOFINEC">Confusion-resistant federated learning via diffusion-based data harmonization on non-iid data</a>
@@ -1017,7 +1095,10 @@
           </li>
 
           <li class="publication">
-            <span class="venue">NeurIPS 2024</span>
+            <div class="pub-preview">
+              <span class="venue">NeurIPS 2024</span>
+              <img class="pub-figure" src="assets/publications/neurips-swift.png" alt="Experimental figure for Swift sampler" loading="lazy">
+            </div>
             <div>
               <p class="paper-title">
                 <a href="https://scholar.google.com.hk/citations?view_op=view_citation&amp;hl=zh-TW&amp;user=TQIKwMIAAAAJ&amp;citation_for_view=TQIKwMIAAAAJ:u-x6o8ySG0sC">Swift sampler: Efficient learning of sampler by 10 parameters</a>
