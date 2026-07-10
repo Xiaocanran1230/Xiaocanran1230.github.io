@@ -579,13 +579,15 @@
         width: 100%;
         min-height: 30px;
         padding: 7px 10px;
-        border: 0;
+        border: 1px solid rgba(194, 221, 241, 0.94);
         border-radius: 7px;
-        background: linear-gradient(135deg, #d516c4 0%, #a313bd 58%, #7247d9 100%);
-        color: #fff;
+        background:
+          linear-gradient(135deg, rgba(255, 255, 255, 0.74), rgba(255, 255, 255, 0.3)),
+          linear-gradient(135deg, var(--accent-soft) 0%, var(--pink-soft) 100%);
+        color: #236fa9;
         font-size: 12px;
         letter-spacing: 0.01em;
-        box-shadow: 0 10px 22px rgba(169, 33, 182, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.26);
+        box-shadow: 0 10px 22px rgba(82, 148, 202, 0.14), 0 7px 18px rgba(232, 150, 190, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.82);
       }
 
       .pub-preview .venue::before {
