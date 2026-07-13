@@ -239,6 +239,34 @@
         font-weight: 700;
       }
 
+      .meta-content {
+        display: inline-flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+        min-width: 0;
+      }
+
+      .scholar-citation-badge {
+        display: inline-flex;
+        align-items: center;
+        line-height: 1;
+        text-decoration: none;
+        transition: filter 160ms ease, transform 160ms ease;
+      }
+
+      .scholar-citation-badge img {
+        display: block;
+        width: auto;
+        height: 20px;
+      }
+
+      .scholar-citation-badge:hover,
+      .scholar-citation-badge:focus {
+        filter: drop-shadow(0 5px 10px rgba(82, 148, 202, 0.18));
+        transform: translateY(-1px);
+      }
+
       .profile {
         margin: 0;
       }
@@ -673,38 +701,6 @@
         color: #9a6819;
       }
 
-      .citation-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        margin-left: 6px;
-        padding: 4px 10px;
-        border: 1px solid rgba(185, 216, 239, 0.96);
-        border-radius: 999px;
-        background:
-          linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.34)),
-          linear-gradient(135deg, var(--accent-soft), var(--pink-soft));
-        color: #236fa9;
-        font-size: 12px;
-        font-weight: 780;
-        line-height: 1.2;
-        text-decoration: none;
-        white-space: nowrap;
-        box-shadow: 0 8px 18px rgba(82, 148, 202, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.86);
-        transition: box-shadow 160ms ease, transform 160ms ease;
-      }
-
-      .citation-badge strong {
-        color: #b85f94;
-        font-size: 13px;
-      }
-
-      .citation-badge:hover,
-      .citation-badge:focus {
-        box-shadow: 0 12px 24px rgba(82, 148, 202, 0.15), 0 8px 18px var(--pink-glow);
-        transform: translateY(-1px);
-      }
-
       .paper-highlight {
         max-height: 0;
         margin: 0;
@@ -869,8 +865,16 @@
             </div>
             <div class="meta-item">
               <span>↗</span>
-              <span>
+              <span class="meta-content">
                 <a href="https://scholar.google.com/citations?user=TQIKwMIAAAAJ&hl=zh-TW">Google Scholar</a>
+                <a class="scholar-citation-badge" href="https://scholar.google.com/citations?user=TQIKwMIAAAAJ&amp;hl=zh-TW" data-citation-badge aria-label="409 citations on Google Scholar">
+                  <img
+                    data-citation-badge-image
+                    src="https://img.shields.io/badge/citations-409-4285F4?style=flat&amp;logo=googlescholar&amp;logoColor=white&amp;labelColor=555"
+                    alt="409 citations"
+                    loading="lazy"
+                  >
+                </a>
               </span>
             </div>
             <div class="meta-item">
@@ -909,11 +913,6 @@
           data attribution and valuation. I have published over twenty
           papers in <a href="https://www.ccf.org.cn/Academic_Evaluation/By_category/">CCF-A</a>
           venues, including NeurIPS, ICLR, ICML, AAAI, WWW, CVPR, and ACM MM.
-          <a class="citation-badge" href="https://scholar.google.com/citations?user=TQIKwMIAAAAJ&amp;hl=zh-TW" data-citation-badge aria-label="Google Scholar citations">
-            <span>Google Scholar</span>
-            <strong data-citation-count>409</strong>
-            <span>citations</span>
-          </a>
         </p>
         <div class="research-bento" aria-label="Data intelligence research interests">
           <a class="research-card" href="https://scholar.google.com/citations?view_op=search_authors&hl=zh-TW&mauthors=label:continual_learning">
@@ -1206,11 +1205,15 @@
 
       (() => {
         const badge = document.querySelector("[data-citation-badge]");
-        const count = document.querySelector("[data-citation-count]");
+        const badgeImage = document.querySelector("[data-citation-badge-image]");
 
-        if (!badge || !count || !window.fetch) {
+        if (!badge || !badgeImage || !window.fetch) {
           return;
         }
+
+        const badgeUrl = (citations) => (
+          `https://img.shields.io/badge/citations-${encodeURIComponent(citations)}-4285F4?style=flat&logo=googlescholar&logoColor=white&labelColor=555`
+        );
 
         fetch("assets/scholar-citations.json", { cache: "no-store" })
           .then((response) => (response.ok ? response.json() : null))
@@ -1221,7 +1224,10 @@
               return;
             }
 
-            count.textContent = citations.toLocaleString("en-US");
+            const formatted = citations.toLocaleString("en-US");
+            badgeImage.src = badgeUrl(formatted);
+            badgeImage.alt = `${formatted} citations`;
+            badge.setAttribute("aria-label", `${formatted} citations on Google Scholar`);
 
             if (data.updated_at) {
               badge.title = `Google Scholar citations, updated ${data.updated_at}`;
