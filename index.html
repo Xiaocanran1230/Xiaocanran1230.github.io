@@ -247,7 +247,7 @@
         min-width: 0;
       }
 
-      .scholar-citation-badge {
+      .profile-badge {
         display: inline-flex;
         align-items: center;
         line-height: 1;
@@ -255,14 +255,14 @@
         transition: filter 160ms ease, transform 160ms ease;
       }
 
-      .scholar-citation-badge img {
+      .profile-badge img {
         display: block;
         width: auto;
         height: 20px;
       }
 
-      .scholar-citation-badge:hover,
-      .scholar-citation-badge:focus {
+      .profile-badge:hover,
+      .profile-badge:focus {
         filter: drop-shadow(0 5px 10px rgba(82, 148, 202, 0.18));
         transform: translateY(-1px);
       }
@@ -867,11 +867,18 @@
               <span>↗</span>
               <span class="meta-content">
                 <a href="https://scholar.google.com/citations?user=TQIKwMIAAAAJ&hl=zh-TW">Google Scholar</a>
-                <a class="scholar-citation-badge" href="https://scholar.google.com/citations?user=TQIKwMIAAAAJ&amp;hl=zh-TW" data-citation-badge aria-label="409 citations on Google Scholar">
+                <a class="profile-badge" href="https://scholar.google.com/citations?user=TQIKwMIAAAAJ&amp;hl=zh-TW" data-citation-badge aria-label="409 citations on Google Scholar">
                   <img
                     data-citation-badge-image
                     src="https://img.shields.io/badge/citations-409-4285F4?style=flat&amp;logo=googlescholar&amp;logoColor=white&amp;labelColor=555"
                     alt="409 citations"
+                    loading="lazy"
+                  >
+                </a>
+                <a class="profile-badge" href="https://orcid.org/0009-0001-9730-5454" aria-label="ORCID: 0009-0001-9730-5454">
+                  <img
+                    src="https://img.shields.io/badge/ORCID-0009--0001--9730--5454-A6CE39?style=flat&amp;logo=orcid&amp;logoColor=white&amp;labelColor=555"
+                    alt="ORCID 0009-0001-9730-5454"
                     loading="lazy"
                   >
                 </a>
