@@ -649,8 +649,10 @@
         font-weight: 800;
         letter-spacing: 0;
         line-height: 1;
+        text-decoration: none;
         white-space: nowrap;
         box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        transition: box-shadow 160ms ease, transform 160ms ease;
       }
 
       .ccf-tag.ccf-a {
@@ -659,10 +661,48 @@
         color: #11735d;
       }
 
+      a.ccf-tag:hover,
+      a.ccf-tag:focus {
+        box-shadow: 0 8px 18px rgba(82, 148, 202, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        transform: translateY(-1px);
+      }
+
       .ccf-tag.ccf-b {
         border: 1px solid #edd397;
         background: linear-gradient(135deg, #fff9e9, #fff4f8);
         color: #9a6819;
+      }
+
+      .citation-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-left: 6px;
+        padding: 4px 10px;
+        border: 1px solid rgba(185, 216, 239, 0.96);
+        border-radius: 999px;
+        background:
+          linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.34)),
+          linear-gradient(135deg, var(--accent-soft), var(--pink-soft));
+        color: #236fa9;
+        font-size: 12px;
+        font-weight: 780;
+        line-height: 1.2;
+        text-decoration: none;
+        white-space: nowrap;
+        box-shadow: 0 8px 18px rgba(82, 148, 202, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.86);
+        transition: box-shadow 160ms ease, transform 160ms ease;
+      }
+
+      .citation-badge strong {
+        color: #b85f94;
+        font-size: 13px;
+      }
+
+      .citation-badge:hover,
+      .citation-badge:focus {
+        box-shadow: 0 12px 24px rgba(82, 148, 202, 0.15), 0 8px 18px var(--pink-glow);
+        transform: translateY(-1px);
       }
 
       .paper-highlight {
@@ -867,8 +907,13 @@
           foundation models to learn from, evaluate, and use reliably. My work
           focuses on dynamic data learning, heterogeneous data learning, and
           data attribution and valuation. I have published over twenty
-          papers in CCF-A venues, including NeurIPS, ICLR, ICML, AAAI, WWW,
-          CVPR, and ACM MM.
+          papers in <a href="https://www.ccf.org.cn/Academic_Evaluation/By_category/">CCF-A</a>
+          venues, including NeurIPS, ICLR, ICML, AAAI, WWW, CVPR, and ACM MM.
+          <a class="citation-badge" href="https://scholar.google.com/citations?user=TQIKwMIAAAAJ&amp;hl=zh-TW" data-citation-badge aria-label="Google Scholar citations">
+            <span>Google Scholar</span>
+            <strong data-citation-count>409</strong>
+            <span>citations</span>
+          </a>
         </p>
         <div class="research-bento" aria-label="Data intelligence research interests">
           <a class="research-card" href="https://scholar.google.com/citations?view_op=search_authors&hl=zh-TW&mauthors=label:continual_learning">
@@ -960,7 +1005,7 @@
             <div>
               <p class="paper-title">
                 <a href="https://icml.cc/virtual/2026/poster/65319">Influence-Disentangled Federated Training: Learning Models That Are Easy to Unlearn</a>
-                <span class="ccf-tag ccf-a">CCF-A</span>
+                <a class="ccf-tag ccf-a" href="https://www.ccf.org.cn/Academic_Evaluation/By_category/">CCF-A</a>
                 <span class="presentation-tag poster">Poster</span>
               </p>
               <p class="authors"><span class="me">C Xiao</span>, Q Chen, L Hou</p>
@@ -977,7 +1022,7 @@
             <div>
               <p class="paper-title">
                 <a href="https://icml.cc/virtual/2026/poster/62151">In-Context Learning as Rate&ndash;Distortion Optimization</a>
-                <span class="ccf-tag ccf-a">CCF-A</span>
+                <a class="ccf-tag ccf-a" href="https://www.ccf.org.cn/Academic_Evaluation/By_category/">CCF-A</a>
                 <span class="presentation-tag poster">Poster</span>
               </p>
               <p class="authors">J Zhang, C Li, <span class="me">C Xiao</span><span class="corresponding">*</span></p>
@@ -1010,7 +1055,7 @@
             <div>
               <p class="paper-title">
                 <a href="https://scholar.google.com/citations?view_op=view_citation&amp;hl=zh-TW&amp;user=TQIKwMIAAAAJ&amp;pagesize=100&amp;sortby=pubdate&amp;citation_for_view=TQIKwMIAAAAJ:hFOr9nPyWt4C">Prototype-Aligned Federated Soft-Prompts for Continual Web Personalization</a>
-                <span class="ccf-tag ccf-a">CCF-A</span>
+                <a class="ccf-tag ccf-a" href="https://www.ccf.org.cn/Academic_Evaluation/By_category/">CCF-A</a>
                 <span class="presentation-tag oral">Oral</span>
               </p>
               <p class="authors"><span class="me">C Xiao</span>, L Hou</p>
@@ -1027,7 +1072,7 @@
             <div>
               <p class="paper-title">
                 <a href="https://scholar.google.com/citations?view_op=view_citation&amp;hl=zh-TW&amp;user=TQIKwMIAAAAJ&amp;pagesize=100&amp;sortby=pubdate&amp;citation_for_view=TQIKwMIAAAAJ:HDshCWvjkbEC">Reversible Primitive-Composition Alignment for Continual Vision-Language Learning</a>
-                <span class="ccf-tag ccf-a">CCF-A</span>
+                <a class="ccf-tag ccf-a" href="https://www.ccf.org.cn/Academic_Evaluation/By_category/">CCF-A</a>
                 <span class="presentation-tag poster">Poster</span>
               </p>
               <p class="authors"><span class="me">C Xiao</span>, T Xu, S Ma, Y Jiang, H Gao, Y Wu</p>
@@ -1044,7 +1089,7 @@
             <div>
               <p class="paper-title">
                 <a href="https://scholar.google.com.hk/citations?view_op=view_citation&amp;hl=zh-TW&amp;user=TQIKwMIAAAAJ&amp;cstart=20&amp;pagesize=80&amp;citation_for_view=TQIKwMIAAAAJ:7PzlFSSx8tAC">Path Matters: Unveiling Geometric Implicit Bias via Curvature-Aware Sparse View Optimization</a>
-                <span class="ccf-tag ccf-a">CCF-A</span>
+                <a class="ccf-tag ccf-a" href="https://www.ccf.org.cn/Academic_Evaluation/By_category/">CCF-A</a>
                 <span class="presentation-tag poster">Poster</span>
               </p>
               <p class="authors"><span class="me">C Xiao</span>, L Fan, Y Li, J Tang, P Yu</p>
@@ -1061,7 +1106,7 @@
             <div>
               <p class="paper-title">
                 <a href="https://scholar.google.com.hk/citations?view_op=view_citation&amp;hl=zh-TW&amp;user=TQIKwMIAAAAJ&amp;citation_for_view=TQIKwMIAAAAJ:qxL8FJ1GzNcC">Affordance-First Decomposition for Continual Learning in Video-Language Understanding</a>
-                <span class="ccf-tag ccf-a">CCF-A</span>
+                <a class="ccf-tag ccf-a" href="https://www.ccf.org.cn/Academic_Evaluation/By_category/">CCF-A</a>
                 <span class="presentation-tag poster">Poster</span>
               </p>
               <p class="authors">M Xu, H Liu, N Peng, Q Chen, <span class="me">C Xiao</span><span class="corresponding">*</span></p>
@@ -1078,7 +1123,7 @@
             <div>
               <p class="paper-title">
                 <a href="https://scholar.google.com/citations?view_op=view_citation&amp;hl=zh-TW&amp;user=TQIKwMIAAAAJ&amp;pagesize=100&amp;sortby=pubdate&amp;citation_for_view=TQIKwMIAAAAJ:Zph67rFs4hoC">From Points to Coalitions: Hierarchical Contrastive Shapley Values for Prioritizing Data Samples</a>
-                <span class="ccf-tag ccf-a">CCF-A</span>
+                <a class="ccf-tag ccf-a" href="https://www.ccf.org.cn/Academic_Evaluation/By_category/">CCF-A</a>
                 <span class="presentation-tag oral">Oral</span>
               </p>
               <p class="authors"><span class="me">C Xiao</span>, J Dou, Z Lin, Z Ke, L Hou</p>
@@ -1095,7 +1140,7 @@
             <div>
               <p class="paper-title">
                 <a href="https://scholar.google.com/citations?view_op=view_citation&amp;hl=zh-TW&amp;user=TQIKwMIAAAAJ&amp;pagesize=100&amp;sortby=pubdate&amp;citation_for_view=TQIKwMIAAAAJ:IWHjjKOFINEC">Confusion-resistant federated learning via diffusion-based data harmonization on non-iid data</a>
-                <span class="ccf-tag ccf-a">CCF-A</span>
+                <a class="ccf-tag ccf-a" href="https://www.ccf.org.cn/Academic_Evaluation/By_category/">CCF-A</a>
                 <span class="presentation-tag poster">Poster</span>
               </p>
               <p class="authors">X Chen, <span class="me">C Xiao</span><span class="corresponding">*</span>, Y Liu</p>
@@ -1112,7 +1157,7 @@
             <div>
               <p class="paper-title">
                 <a href="https://scholar.google.com.hk/citations?view_op=view_citation&amp;hl=zh-TW&amp;user=TQIKwMIAAAAJ&amp;citation_for_view=TQIKwMIAAAAJ:u-x6o8ySG0sC">Swift sampler: Efficient learning of sampler by 10 parameters</a>
-                <span class="ccf-tag ccf-a">CCF-A</span>
+                <a class="ccf-tag ccf-a" href="https://www.ccf.org.cn/Academic_Evaluation/By_category/">CCF-A</a>
                 <span class="presentation-tag poster">Poster</span>
               </p>
               <p class="authors">J Yao, C Li, <span class="me">C Xiao</span><span class="corresponding">*</span></p>
@@ -1157,6 +1202,32 @@
           newsToggle.setAttribute("aria-expanded", String(!expanded));
           newsToggle.textContent = expanded ? "Show more news" : "Show fewer news";
         });
+      })();
+
+      (() => {
+        const badge = document.querySelector("[data-citation-badge]");
+        const count = document.querySelector("[data-citation-count]");
+
+        if (!badge || !count || !window.fetch) {
+          return;
+        }
+
+        fetch("assets/scholar-citations.json", { cache: "no-store" })
+          .then((response) => (response.ok ? response.json() : null))
+          .then((data) => {
+            const citations = Number(data && data.citations);
+
+            if (!Number.isFinite(citations) || citations <= 0) {
+              return;
+            }
+
+            count.textContent = citations.toLocaleString("en-US");
+
+            if (data.updated_at) {
+              badge.title = `Google Scholar citations, updated ${data.updated_at}`;
+            }
+          })
+          .catch(() => {});
       })();
 
       (() => {
