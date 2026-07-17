@@ -535,11 +535,7 @@
 
       .publication > .pub-preview + div {
         min-width: 0;
-        padding-right: 34px;
-      }
-
-      .publication.is-citation-open {
-        z-index: 5;
+        padding-right: 38px;
       }
 
       .publication:hover {
@@ -560,17 +556,18 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        width: 30px;
+        width: 34px;
         height: 30px;
         padding: 0;
         border: 1px solid rgba(190, 218, 239, 0.92);
-        border-radius: 50%;
+        border-radius: 6px;
         background: linear-gradient(135deg, rgba(239, 248, 255, 0.96), rgba(255, 243, 249, 0.94));
         color: #377cae;
         cursor: pointer;
-        font-family: Georgia, "Times New Roman", serif;
-        font-size: 20px;
-        font-weight: 700;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+        font-size: 9px;
+        font-weight: 800;
+        letter-spacing: 0;
         line-height: 1;
         box-shadow: 0 7px 16px rgba(82, 148, 202, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.9);
         transition: border-color 160ms ease, box-shadow 160ms ease, color 160ms ease, transform 160ms ease;
@@ -600,8 +597,7 @@
       }
 
       .citation-toggle:hover,
-      .citation-toggle:focus-visible,
-      .citation-toggle[aria-expanded="true"] {
+      .citation-toggle:focus-visible {
         border-color: #aacfe9;
         outline: none;
         color: #b85f94;
@@ -615,78 +611,10 @@
         transform: translateY(0);
       }
 
-      .citation-toggle[aria-expanded="true"]::after {
-        opacity: 0;
-      }
-
       .citation-toggle.is-copied {
         border-color: #9fd8c6;
         background: linear-gradient(135deg, #ecfff9, #fff4fa);
         color: #11735d;
-      }
-
-      .citation-menu {
-        position: absolute;
-        top: calc(100% + 7px);
-        right: 0;
-        width: 174px;
-        padding: 6px;
-        border: 1px solid rgba(190, 218, 239, 0.96);
-        border-radius: 8px;
-        background: linear-gradient(145deg, rgba(246, 251, 255, 0.97), rgba(255, 247, 251, 0.97));
-        -webkit-backdrop-filter: blur(12px);
-        backdrop-filter: blur(12px);
-        box-shadow: 0 16px 34px rgba(82, 148, 202, 0.18), 0 10px 26px rgba(238, 159, 192, 0.12);
-      }
-
-      .citation-menu[hidden] {
-        display: none;
-      }
-
-      .citation-menu button {
-        display: grid;
-        grid-template-columns: 30px minmax(0, 1fr);
-        width: 100%;
-        min-height: 36px;
-        align-items: center;
-        gap: 7px;
-        padding: 6px 8px;
-        border: 0;
-        border-radius: 6px;
-        background: transparent;
-        color: #31566f;
-        cursor: pointer;
-        font: inherit;
-        font-size: 12px;
-        font-weight: 680;
-        text-align: left;
-      }
-
-      .citation-menu button:hover,
-      .citation-menu button:focus-visible {
-        outline: none;
-        background: linear-gradient(135deg, rgba(226, 243, 255, 0.9), rgba(255, 234, 245, 0.82));
-        color: #246fa7;
-      }
-
-      .citation-menu-icon {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 28px;
-        height: 24px;
-        border: 1px solid rgba(190, 218, 239, 0.86);
-        border-radius: 5px;
-        background: rgba(255, 255, 255, 0.78);
-        color: #b85f94;
-        font-family: Georgia, "Times New Roman", serif;
-        font-size: 10px;
-        font-weight: 800;
-        line-height: 1;
-      }
-
-      .citation-menu-icon.quote {
-        font-size: 15px;
       }
 
       .citation-status {
@@ -1423,25 +1351,12 @@
         }
 
         const stopWords = new Set(["a", "an", "and", "as", "by", "for", "from", "in", "of", "on", "that", "the", "to", "via"]);
-
         const cleanText = (value) => value.replace(/\s+/g, " ").trim();
-
-        const citationAuthors = (authors) => {
-          if (authors.length < 2) {
-            return authors[0] || "";
-          }
-          if (authors.length === 2) {
-            return `${authors[0]} and ${authors[1]}`;
-          }
-          return `${authors.slice(0, -1).join(", ")}, and ${authors.at(-1)}`;
-        };
-
         const bibtexAuthor = (author) => {
           const parts = author.split(/\s+/);
           const surname = parts.pop();
           return `${surname}, ${parts.join(" ")}`;
         };
-
         const citationKey = (authors, title, year) => {
           const surname = (authors[0] || "paper").split(/\s+/).at(-1).toLowerCase();
           const keyword = title
@@ -1451,6 +1366,71 @@
             .find((word) => word && !stopWords.has(word)) || "paper";
           return `${surname}${year}${keyword}`;
         };
+
+        const bibtexOverrides = new Map([
+          [
+            "Reversible Primitive-Composition Alignment for Continual Vision-Language Learning",
+            `@inproceedings{xiao2026reversible,
+  title={Reversible primitive--composition alignment for continual vision--language learning},
+  author={Xiao, Canran and Xu, Tianxiang and Ma, Siyuan and Jiang, Yiyang and Gao, Haoyu and Wu, Yuhan},
+  booktitle={The Fourteenth International Conference on Learning Representations},
+  year={2026}
+}`,
+          ],
+          [
+            "Path Matters: Unveiling Geometric Implicit Bias via Curvature-Aware Sparse View Optimization",
+            `@inproceedings{xiaopath,
+  title={Path Matters: Unveiling Geometric Implicit Bias via Curvature-Aware Sparse View Optimization},
+  author={Xiao, Canran and Fan, Liaoyuan and Li, Yanbin and Tang, Jing and Yu, Peilai},
+  booktitle={The Fourteenth International Conference on Learning Representations},
+  year={2026}
+}`,
+          ],
+          [
+            "Prototype-Aligned Federated Soft-Prompts for Continual Web Personalization",
+            `@inproceedings{xiao2026prototype,
+  title={Prototype-Aligned Federated Soft-Prompts for Continual Web Personalization},
+  author={Xiao, Canran and Hou, Liwei},
+  booktitle={Proceedings of the ACM Web Conference 2026},
+  pages={6743--6754},
+  year={2026}
+}`,
+          ],
+          [
+            "Affordance-First Decomposition for Continual Learning in Video-Language Understanding",
+            `@inproceedings{xu_2026_CVPR,
+  author={Xu, Mengzhu and Liu, Hanzhi and Peng, Ningkang and Chen, Qianyu and Xiao, Canran},
+  title={Affordance-First Decomposition for Continual Learning in Video-Language Understanding},
+  booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
+  month={June},
+  year={2026},
+  pages={3908-3919}
+}`,
+          ],
+          [
+            "Confusion-resistant federated learning via diffusion-based data harmonization on non-iid data",
+            `@article{chen2024confusion,
+  title={Confusion-resistant federated learning via diffusion-based data harmonization on non-IID data},
+  author={Chen, Xiaohong and Xiao, Canran and Liu, Yongmei},
+  journal={Advances in Neural Information Processing Systems},
+  volume={37},
+  pages={137495--137520},
+  year={2024}
+}`,
+          ],
+          [
+            "From Points to Coalitions: Hierarchical Contrastive Shapley Values for Prioritizing Data Samples",
+            `@inproceedings{xiao2026points,
+  title={From points to coalitions: Hierarchical contrastive shapley values for prioritizing data samples},
+  author={Xiao, Canran and Dou, Jiabao and Lin, Zhiming and Ke, Zong and Hou, Liwei},
+  booktitle={Proceedings of the AAAI Conference on Artificial Intelligence},
+  volume={40},
+  number={19},
+  pages={15995--16003},
+  year={2026}
+}`,
+          ],
+        ]);
 
         const fallbackCopy = (text) => {
           const field = document.createElement("textarea");
@@ -1475,21 +1455,7 @@
           }
         };
 
-        const closeMenus = (exception) => {
-          publications.forEach((publication) => {
-            const tools = publication.querySelector(".citation-tools");
-            if (!tools || tools === exception) {
-              return;
-            }
-            const toggle = tools.querySelector(".citation-toggle");
-            const menu = tools.querySelector(".citation-menu");
-            menu.hidden = true;
-            toggle.setAttribute("aria-expanded", "false");
-            publication.classList.remove("is-citation-open");
-          });
-        };
-
-        publications.forEach((publication, index) => {
+        publications.forEach((publication) => {
           const titleLink = publication.querySelector(".paper-title > a:first-child");
           const authorsElement = publication.querySelector(".authors");
           const booktitleElement = publication.querySelector(".booktitle");
@@ -1508,8 +1474,7 @@
           const year = (booktitle.match(/\b(19|20)\d{2}\b/) || venueElement?.textContent.match(/\b(19|20)\d{2}\b/) || [])[0] || "n.d.";
           const url = titleLink.href;
           const key = citationKey(authors, paperTitle, year);
-          const citation = `${citationAuthors(authors)}. “${paperTitle}.” ${booktitle}${year === "n.d." ? "" : `, ${year}`}. ${url}`;
-          const bibtex = [
+          const generatedBibtex = [
             `@inproceedings{${key},`,
             `  title     = {${paperTitle}},`,
             `  author    = {${authors.map(bibtexAuthor).join(" and ")}},`,
@@ -1518,93 +1483,43 @@
             `  url       = {${url}}`,
             `}`,
           ].join("\n");
+          const bibtex = bibtexOverrides.get(paperTitle) || generatedBibtex;
 
           const tools = document.createElement("div");
           const toggle = document.createElement("button");
-          const menu = document.createElement("div");
           const status = document.createElement("span");
-          const menuId = `citation-menu-${index + 1}`;
 
           tools.className = "citation-tools";
           toggle.className = "citation-toggle";
           toggle.type = "button";
-          toggle.textContent = "”";
-          toggle.setAttribute("aria-label", `Citation options for ${paperTitle}`);
-          toggle.setAttribute("aria-controls", menuId);
-          toggle.setAttribute("aria-expanded", "false");
-          toggle.setAttribute("aria-haspopup", "menu");
-          toggle.dataset.tooltip = "Citation options";
-
-          menu.className = "citation-menu";
-          menu.id = menuId;
-          menu.setAttribute("role", "menu");
-          menu.hidden = true;
-          menu.innerHTML = `
-            <button type="button" role="menuitem" data-copy-format="bibtex">
-              <span class="citation-menu-icon" aria-hidden="true">BIB</span>
-              <span>Copy BibTeX</span>
-            </button>
-            <button type="button" role="menuitem" data-copy-format="citation">
-              <span class="citation-menu-icon quote" aria-hidden="true">“”</span>
-              <span>Copy citation</span>
-            </button>
-          `;
+          toggle.textContent = "BIB";
+          toggle.setAttribute("aria-label", `Copy BibTeX for ${paperTitle}`);
+          toggle.dataset.tooltip = "Copy BibTeX";
 
           status.className = "citation-status";
           status.setAttribute("role", "status");
           status.setAttribute("aria-live", "polite");
-          tools.append(toggle, menu, status);
+          tools.append(toggle, status);
           publication.appendChild(tools);
 
-          toggle.addEventListener("click", (event) => {
-            event.stopPropagation();
-            const opening = menu.hidden;
-            closeMenus(tools);
-            menu.hidden = !opening;
-            toggle.setAttribute("aria-expanded", String(opening));
-            publication.classList.toggle("is-citation-open", opening);
-          });
-
-          menu.addEventListener("click", async (event) => {
-            const command = event.target.closest("[data-copy-format]");
-            if (!command) {
-              return;
-            }
-
-            event.stopPropagation();
-            const format = command.dataset.copyFormat;
-            const label = format === "bibtex" ? "BibTeX" : "citation";
-
+          toggle.addEventListener("click", async () => {
             try {
-              await copyText(format === "bibtex" ? bibtex : citation);
-              menu.hidden = true;
-              toggle.setAttribute("aria-expanded", "false");
+              await copyText(bibtex);
               toggle.textContent = "✓";
               toggle.classList.add("is-copied");
-              toggle.dataset.tooltip = `${label} copied`;
-              status.textContent = `${label} copied for ${paperTitle}`;
-              publication.classList.remove("is-citation-open");
+              toggle.dataset.tooltip = "BibTeX copied";
+              status.textContent = `BibTeX copied for ${paperTitle}`;
 
               window.setTimeout(() => {
-                toggle.textContent = "”";
+                toggle.textContent = "BIB";
                 toggle.classList.remove("is-copied");
-                toggle.dataset.tooltip = "Citation options";
+                toggle.dataset.tooltip = "Copy BibTeX";
               }, 1500);
             } catch (error) {
-              status.textContent = `Unable to copy ${label}.`;
+              status.textContent = "Unable to copy BibTeX.";
               toggle.dataset.tooltip = "Copy failed";
             }
           });
-        });
-
-        document.addEventListener("click", () => closeMenus());
-        document.addEventListener("keydown", (event) => {
-          if (event.key !== "Escape") {
-            return;
-          }
-          const activeToggle = document.querySelector('.citation-toggle[aria-expanded="true"]');
-          closeMenus();
-          activeToggle?.focus();
         });
       })();
 
